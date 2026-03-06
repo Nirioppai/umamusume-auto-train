@@ -351,7 +351,7 @@ class _TimedFormatter(logging.Formatter):
       h = elapsed // 3600
       m = (elapsed % 3600) // 60
       s = elapsed % 60
-      prefix += f" | {h}h {m}m {s}s since last {bot.hotkey} cmd"
+      prefix += f" | {h}h {m}m {s}s Since Last {bot.hotkey} Key Press"
     return f"{prefix} | {record.getMessage()}"
 
 def init_logging():
