@@ -143,6 +143,7 @@ def main():
 def hotkey_listener():
   while True:
     keyboard.wait(bot.hotkey)
+    bot.bot_start_time = time.time()
     if not bot.is_bot_running:
       print("[BOT] Starting...")
       bot.is_bot_running = True

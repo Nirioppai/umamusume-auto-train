@@ -342,6 +342,18 @@ def record_turn(state, last_state, action):
   rotate_log(os.path.join(log_dir, "actions_taken.txt"))
   rotate_log(os.path.join(log_dir, "year_changes.txt"))
 
+class _TimedFormatter(logging.Formatter):
+  def format(self, record):
+    now = time.strftime("%I:%M %p").lstrip("0").upper()
+    prefix = f"[{record.levelname}] {now}"
+    if bot.bot_start_time is not None:
+      elapsed = int(time.time() - bot.bot_start_time)
+      h = elapsed // 3600
+      m = (elapsed % 3600) // 60
+      s = elapsed % 60
+      prefix += f" | {h}h {m}m {s}s since last {bot.hotkey} cmd"
+    return f"{prefix} | {record.getMessage()}"
+
 def init_logging():
   global log_level, log_dir
 
@@ -358,7 +370,7 @@ def init_logging():
   for h in root.handlers[:]:
     root.removeHandler(h)
 
-  formatter = logging.Formatter("[%(levelname)s] %(message)s")
+  formatter = _TimedFormatter()
 
   # ---------------------------
   # Console handler (respects CLI level)
@@ -375,9 +387,7 @@ def init_logging():
     encoding="utf-8"
   )
 
-  handler.setFormatter(
-    logging.Formatter("[%(levelname)s] %(message)s")
-  )
+  handler.setFormatter(_TimedFormatter())
   handler.setLevel(log_level)
 
   logging.getLogger().addHandler(handler)
@@ -388,9 +398,7 @@ def init_logging():
     backupCount=5,
     encoding="utf-8"
   )
-  debug_handler.setFormatter(
-    logging.Formatter("[%(levelname)s] %(message)s")
-  )
+  debug_handler.setFormatter(_TimedFormatter())
   debug_handler.setLevel(logging.DEBUG)
   logging.getLogger().addHandler(debug_handler)
 
