@@ -32965,15 +32965,43 @@ function RaceDateCard({
             group relative min-h-22 rounded-xl border text-sm font-medium transition-all duration-200
             ${filtered.length === 0 ? "border-muted-foreground/20 text-muted-foreground/40 cursor-not-allowed bg-muted/30" : selectedRaces.length > 0 ? "border-primary bg-primary/10 text-foreground shadow-sm cursor-pointer" : "border-border hover:border-primary/40 hover:bg-primary/5 text-foreground cursor-pointer"}
           `,
-        children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col items-center justify-center h-full p-2", children: [
-          ["Early Jul", "Late Jul", "Early Aug", "Late Aug"].includes(date2) && !year.includes("Junior Year") && /* @__PURE__ */ jsxRuntimeExports.jsx(ThermometerSun, { className: "absolute right-2 top-2", size: 16 }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-base font-semibold", children: date2 }),
+        children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col items-center justify-center h-full p-2 gap-0.5 overflow-hidden w-full", children: [
+          ["Early Jul", "Late Jul", "Early Aug", "Late Aug"].includes(date2) && !year.includes("Junior Year") && /* @__PURE__ */ jsxRuntimeExports.jsx(
+            ThermometerSun,
+            {
+              className: "absolute right-2 top-2 shrink-0",
+              size: 16
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm font-semibold text-center leading-tight", children: date2 }),
           filtered.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs mt-1 truncate max-w-full px-2 block", children: selectedRaces.length > 0 ? selectedRaces.map((r2, i) => /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { children: [
-              r2.name,
-              i < selectedRaces.length - 1 && /* @__PURE__ */ jsxRuntimeExports.jsx("br", {})
-            ] }, r2.name + i)) : `${filtered.length} Race${filtered.length > 1 ? "s" : ""} Available` }),
-            selectedRaces.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx(Badge, { className: "mt-1 text-xs", children: "Selected" })
+            selectedRaces.length > 0 ? selectedRaces.map((r2, i) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "div",
+              {
+                className: "flex flex-wrap items-center justify-center gap-x-1 gap-y-0.5 w-full px-1",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[11px] leading-tight text-center wrap-break-word min-w-0", children: r2.name }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-0.5 shrink-0", children: [
+                    races[r2.name]?.grade === "G1" && /* @__PURE__ */ jsxRuntimeExports.jsx(Badge, { className: "text-[9px] px-1 py-0 h-3.5 bg-yellow-500 text-yellow-950 hover:bg-yellow-500", children: "G1" }),
+                    races[r2.name]?.grade === "G2" && /* @__PURE__ */ jsxRuntimeExports.jsx(Badge, { className: "text-[9px] px-1 py-0 h-3.5 bg-slate-400 text-slate-950 hover:bg-slate-400", children: "G2" }),
+                    races[r2.name]?.grade === "G3" && /* @__PURE__ */ jsxRuntimeExports.jsx(Badge, { className: "text-[9px] px-1 py-0 h-3.5 bg-amber-700 text-amber-100 hover:bg-amber-700", children: "G3" }),
+                    races[r2.name] && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "text-[9px] text-muted-foreground whitespace-nowrap", children: [
+                      races[r2.name].terrain,
+                      " ",
+                      races[r2.name].distance.type
+                    ] })
+                  ] })
+                ]
+              },
+              r2.name + i
+            )) : /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "text-[11px] text-center leading-tight", children: [
+              filtered.length,
+              " Race",
+              filtered.length > 1 ? "s" : "",
+              " ",
+              "Available"
+            ] }),
+            selectedRaces.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx(Badge, { className: "mt-0.5 text-[10px] px-1.5 py-0 h-4", children: "Selected" })
           ] })
         ] })
       }
