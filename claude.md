@@ -225,6 +225,27 @@ python main.py        # starts server + hotkey listener
 cd web && npm run build   # outputs to web/dist/
 ```
 
+### Mandatory: log every change to the Updates section
+
+**After every change to this codebase, append an entry to the `## Updates` section at the bottom of this file.** This is required — not optional. It keeps a running log that helps detect merge conflicts with upstream and catch future incompatibilities.
+
+**Format:**
+```
+### YYYY-MM-DD — Short description of what was done
+
+| # | File(s) | What changed |
+|---|---------|-------------|
+| 1 | `path/to/file.py` | One sentence describing the specific change |
+| 2 | `path/to/another.tsx` | One sentence describing the specific change |
+```
+
+**Rules:**
+- One entry per session/task, not per file. Group all files touched in one task into one table.
+- Date is today's date. Description is the task, not the implementation detail.
+- File paths use backtick code formatting.
+- "What changed" must describe the *actual change* — not just "updated" or "modified". Say what was added, removed, fixed, or refactored.
+- If upstream commits are merged, add entries for those too, summarizing what they changed.
+
 ### Things Claude should know
 - **Windows-only:** PyAutoGUI and PyGetWindow are Windows-native. Do not suggest cross-platform alternatives for these.
 - **No test suite:** There are no unit or integration tests. Verification is done by running the bot.
@@ -240,3 +261,59 @@ cd web && npm run build   # outputs to web/dist/
 - Multiple bot instances share `config.json` — they don't have isolated configs
 - ADB mode and desktop mode use the same code path via `device_action_wrapper.py` — check `bot.use_adb` flag, not the library directly
 - Template image confidence thresholds matter — too low causes false positives, too high causes missed matches
+
+---
+
+## Updates
+
+### 2026-03-20 — Race schedule UI improvements
+
+| # | File(s) | What changed |
+|---|---------|-------------|
+| 1 | `web/src/components/race-schedule/race-schedule/RaceDateCard.tsx` | Removed duplicate race-name span that was rendering selected race names twice without badges; replaced `truncate` with proper wrapping layout so race name + grade badge + terrain info stack correctly on small cards; downsized text and badge heights for small-screen fit |
+| 2 | `web/dist/app.js`, `web/dist/assets/index.css` | Rebuilt frontend bundle to ship UI changes |
+
+### 2026-03-20 — Bot logging, server port, OCR, and run script
+
+| # | File(s) | What changed |
+|---|---------|-------------|
+| 1 | `utils/log.py` | Added `_TimedFormatter` class — log messages now include current wall-clock time and elapsed time since last hotkey press (e.g. `[INFO] 12:07 PM \| 0h 2m 15s Since Last f1 Key Press \| ...`) |
+| 2 | `core/bot.py` | Added `bot_start_time` module-level variable, set when hotkey is pressed, consumed by `_TimedFormatter` |
+| 3 | `main.py` | Changed default server start port from `8000` to `8001`; records `bot.bot_start_time = time.time()` on hotkey press |
+| 4 | `core/ocr.py` | Switched EasyOCR reader from `gpu=False` to `gpu=True` |
+| 5 | `_run.bat` | Added Windows batch script as a one-click launcher |
+
+### 2026-03-20 — MANT scenario banner
+
+| # | File(s) | What changed |
+|---|---------|-------------|
+| 1 | `assets/scenario_banner/mant.png` | Added banner image for MANT scenario detection |
+
+### 2026-03-19 — Race schedule filter bug fixes (`core/state.py`)
+
+Three successive patches to `filter_race_schedule()`:
+
+| # | Commit | What changed |
+|---|--------|-------------|
+| 1 | `353a3cb` | Fixed `KeyError` crash — switched from shallow `.copy()` to `copy.deepcopy()` on `RACE_SCHEDULE_CONF`; moved `import copy` to module scope |
+| 2 | `fab1e69` | Fixed iteration bug — was removing from `config.RACE_SCHEDULE[date]` while iterating `schedule[date]`; corrected to remove from the list being iterated and deep-copy back at the end |
+| 3 | `bc2f19b` | Refactored filtering to build a `new_list` instead of mutating during iteration; pre-computed `valid_names` set for O(1) lookup |
+
+### 2026-03-15 — UI config management overhaul
+
+| # | File(s) | What changed |
+|---|---------|-------------|
+| 1 | `server/config_store.py` *(new)* | Full file-based preset CRUD — list, load, save, delete, duplicate config presets stored as `config/config_N.json` files; includes `_deep_merge` to backfill missing keys from `config.template.json` |
+| 2 | `server/setup_store.py` *(new)* | Separate store for global setup config (window name, ADB, OCR settings) shared across all presets |
+| 3 | `server/store_shared.py` *(new)* | Shared path utilities, `safe_resolve()` (directory traversal guard), `safe_name()` (filename validation regex) |
+| 4 | `server/legacy_config_store.py` *(new)* | Backwards-compat shim to import presets from old browser `localStorage` JSON export format |
+| 5 | `migrate_local_storage_presets.py` *(new)* | CLI script to migrate old `localStorage` preset exports into `config/` files |
+| 6 | `server/main.py` | Added full preset CRUD endpoints (`GET/POST /configs`, `GET/PUT/DELETE /configs/{name}`, `POST /configs/{name}/duplicate`), setup config endpoints, applied-preset tracking |
+| 7 | `web/src/App.tsx`, `hooks/useConfigPreset.ts`, `hooks/useImportConfig.ts` | Web UI wired to new preset API — preset list, create, rename, delete, import, duplicate, apply |
+| 8 | `update_config.py` | Refactored to use new `server/config_store.py` deep-merge logic |
+
+### 2026-03-15 — Config deep-merge fix
+
+| # | File(s) | What changed |
+|---|---------|-------------|
+| 1 | `update_config.py` | Fixed `_deep_merge` to correctly recurse into nested dicts instead of overwriting entire sub-objects |
