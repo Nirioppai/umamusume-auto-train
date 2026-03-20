@@ -10,7 +10,15 @@ import { Badge } from '@/components/ui/badge';
 import type { RaceScheduleType, RaceType } from '@/types/race.type';
 import RaceCard from './RaceCard';
 import { Calendar, ThermometerSun } from 'lucide-react';
-import { RACE_EPITHET_MAP } from '@/data/epithets';
+import { RACE_EPITHET_MAP, EPITHET_COLORS } from '@/data/epithets';
+
+function getEpithetForYear(raceName: string, year: string): string | undefined {
+  const epithet = RACE_EPITHET_MAP[raceName];
+  if (!epithet) return undefined;
+  const isSeniorEpithet = epithet.includes('Senior');
+  const isSeniorYear = year.includes('Senior');
+  return isSeniorEpithet === isSeniorYear ? epithet : undefined;
+}
 
 type Props = {
   date: string;
@@ -95,9 +103,9 @@ export default function RaceDateCard({
                         </span>
                       )}
                     </div>
-                    {RACE_EPITHET_MAP[r.name] && (
-                      <span className='text-[10px] text-purple-400 text-center leading-tight w-full'>
-                        {RACE_EPITHET_MAP[r.name]}
+                    {getEpithetForYear(r.name, year) && (
+                      <span className={`text-[10px] text-center leading-tight w-full ${EPITHET_COLORS[getEpithetForYear(r.name, year)!]}`}>
+                        {getEpithetForYear(r.name, year)}
                       </span>
                     )}
                   </div>

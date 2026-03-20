@@ -1,6 +1,18 @@
 {
-  "Classic Triple Crown": ["Satsuki Sho", "Tokyo Yushun Japanese Derby", "Kikuka Sho"],
-  "Triple Tiara": ["Oka Sho", "Japanese Oaks", "Shuka Sho"],
-  "Senior Spring Triple Crown": ["Osaka Hai", "Tenno Sho Spring", "Takarazuka Kinen"],
-  "Senior Autumn Triple Crown": ["Tenno Sho Autumn", "Japan Cup", "Arima Kinen"]
+  "Classic Triple Crown": {
+    "color": "text-yellow-500",
+    "races": ["Satsuki Sho", "Tokyo Yushun Japanese Derby", "Kikuka Sho"]
+  },
+  "Triple Tiara": {
+    "color": "text-rose-400",
+    "races": ["Oka Sho", "Japanese Oaks", "Shuka Sho"]
+  },
+  "Senior Spring Triple Crown": {
+    "color": "text-emerald-400",
+    "races": ["Osaka Hai", "Tenno Sho Spring", "Takarazuka Kinen"]
+  },
+  "Senior Autumn Triple Crown": {
+    "color": "text-orange-400",
+    "races": ["Tenno Sho Autumn", "Japan Cup", "Arima Kinen"]
+  }
 }

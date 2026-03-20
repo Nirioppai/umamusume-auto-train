@@ -292,6 +292,25 @@ cd web && npm run build   # outputs to web/dist/
 | 5   | `web/src/components/set-up/SetUpSection.tsx`   | Added Scenario selector dropdown in Trainer Set-Up section; fetches available/selected from `/config/scenario`, saves on change, shows "Auto-detect" option for empty selection  |
 | 6   | `web/dist/app.js`, `web/dist/assets/index.css` | Rebuilt frontend bundle to ship UI changes                                                                                                                                       |
 
+### 2026-03-20 — Migrate epithet data to single JSON source of truth
+
+| # | File(s) | What changed |
+|---|---------|-------------|
+| 1 | `constants/epithets.json` | Restructured to include `color` and `races` per epithet — now the single file to edit when adding epithets |
+| 2 | `web/src/data/epithets.ts` | Replaced hardcoded data with import from `@constants/epithets.json`; derives `EPITHET_COLORS` and `RACE_EPITHET_MAP` at module load |
+| 3 | `web/vite.config.ts` | Added `@constants` alias pointing to `../constants/` |
+| 4 | `web/tsconfig.app.json` | Added `@constants/*` path alias so TypeScript resolves the JSON import |
+| 5 | `web/src/index.css` | Added `@source "../../constants/epithets.json"` so Tailwind v4 includes color utility classes defined as string values in the JSON |
+| 6 | `web/dist/app.js`, `web/dist/assets/index.css` | Rebuilt frontend bundle |
+
+### 2026-03-20 — Fix epithet year-scoping in race schedule
+
+| # | File(s) | What changed |
+|---|---------|-------------|
+| 1 | `web/src/components/race-schedule/race-schedule/RaceDateCard.tsx` | Added `getEpithetForYear()` helper; Senior epithets now only display on Senior Year cards, Classic epithets only on Classic Year cards |
+| 2 | `web/src/components/race-schedule/race-schedule/RaceCard.tsx` | Same `getEpithetForYear()` helper added; `year` prop now destructured and used for epithet filtering |
+| 3 | `web/dist/app.js` | Rebuilt frontend bundle |
+
 ### 2026-03-20 — Race schedule epithet indicators
 
 | # | File(s) | What changed |

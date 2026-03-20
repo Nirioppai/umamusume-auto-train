@@ -32953,28 +32953,20 @@ function RaceFilters({ filterState }) {
     ] })
   ] });
 }
-const EPITHETS = {
-  "Classic Triple Crown": [
-    "Satsuki Sho",
-    "Tokyo Yushun Japanese Derby",
-    "Kikuka Sho"
-  ],
-  "Triple Tiara": ["Oka Sho", "Japanese Oaks", "Shuka Sho"],
-  "Senior Spring Triple Crown": [
-    "Osaka Hai",
-    "Tenno Sho Spring",
-    "Takarazuka Kinen"
-  ],
-  "Senior Autumn Triple Crown": [
-    "Tenno Sho Autumn",
-    "Japan Cup",
-    "Arima Kinen"
-  ]
+const epithetsJson = {
+  "Classic Triple Crown": { "color": "text-yellow-500", "races": ["Satsuki Sho", "Tokyo Yushun Japanese Derby", "Kikuka Sho"] },
+  "Triple Tiara": { "color": "text-rose-400", "races": ["Oka Sho", "Japanese Oaks", "Shuka Sho"] },
+  "Senior Spring Triple Crown": { "color": "text-emerald-400", "races": ["Osaka Hai", "Tenno Sho Spring", "Takarazuka Kinen"] },
+  "Senior Autumn Triple Crown": { "color": "text-orange-400", "races": ["Tenno Sho Autumn", "Japan Cup", "Arima Kinen"] }
 };
+const EPITHETS = epithetsJson;
+const EPITHET_COLORS = Object.fromEntries(
+  Object.entries(EPITHETS).map(([name, { color }]) => [name, color])
+);
 const RACE_EPITHET_MAP = Object.entries(
   EPITHETS
 ).reduce(
-  (acc, [epithet, races]) => {
+  (acc, [epithet, { races }]) => {
     races.forEach((race) => {
       acc[race] = epithet;
     });
@@ -32982,9 +32974,17 @@ const RACE_EPITHET_MAP = Object.entries(
   },
   {}
 );
+function getEpithetForYear$1(raceName, year) {
+  const epithet = RACE_EPITHET_MAP[raceName];
+  if (!epithet) return void 0;
+  const isSeniorEpithet = epithet.includes("Senior");
+  const isSeniorYear = year.includes("Senior");
+  return isSeniorEpithet === isSeniorYear ? epithet : void 0;
+}
 function RaceCard({
   title,
   race,
+  year,
   isSelected,
   onSelect,
   onDeselect
@@ -33052,9 +33052,9 @@ function RaceCard({
             "Sparks: ",
             race.sparks.join(", ")
           ] }) }) }),
-          RACE_EPITHET_MAP[title] && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex items-center gap-2", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "text-purple-500 font-medium", children: [
+          getEpithetForYear$1(title, year) && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex items-center gap-2", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: `font-medium ${EPITHET_COLORS[getEpithetForYear$1(title, year)]}`, children: [
             "★ ",
-            RACE_EPITHET_MAP[title]
+            getEpithetForYear$1(title, year)
           ] }) }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 pt-2 border-t", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(Users, { className: "w-4 h-4" }),
@@ -33073,6 +33073,13 @@ function RaceCard({
       ]
     }
   );
+}
+function getEpithetForYear(raceName, year) {
+  const epithet = RACE_EPITHET_MAP[raceName];
+  if (!epithet) return void 0;
+  const isSeniorEpithet = epithet.includes("Senior");
+  const isSeniorYear = year.includes("Senior");
+  return isSeniorEpithet === isSeniorYear ? epithet : void 0;
 }
 function RaceDateCard({
   date: date2,
@@ -33123,7 +33130,7 @@ function RaceDateCard({
                       races[r2.name].distance.type
                     ] })
                   ] }),
-                  RACE_EPITHET_MAP[r2.name] && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[10px] text-purple-400 text-center leading-tight w-full", children: RACE_EPITHET_MAP[r2.name] })
+                  getEpithetForYear(r2.name, year) && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `text-[10px] text-center leading-tight w-full ${EPITHET_COLORS[getEpithetForYear(r2.name, year)]}`, children: getEpithetForYear(r2.name, year) })
                 ]
               },
               r2.name + i

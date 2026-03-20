@@ -2,7 +2,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users } from "lucide-react";
 import type { RaceType } from "@/types/race.type";
-import { RACE_EPITHET_MAP } from "@/data/epithets";
+import { RACE_EPITHET_MAP, EPITHET_COLORS } from "@/data/epithets";
+
+function getEpithetForYear(raceName: string, year: string): string | undefined {
+  const epithet = RACE_EPITHET_MAP[raceName];
+  if (!epithet) return undefined;
+  const isSeniorEpithet = epithet.includes('Senior');
+  const isSeniorYear = year.includes('Senior');
+  return isSeniorEpithet === isSeniorYear ? epithet : undefined;
+}
 
 type Props = {
   title: string;
@@ -16,6 +24,7 @@ type Props = {
 export default function RaceCard({
   title,
   race,
+  year,
   isSelected,
   onSelect,
   onDeselect,
@@ -93,10 +102,10 @@ export default function RaceCard({
           </div>
         </div>
 
-        {RACE_EPITHET_MAP[title] && (
+        {getEpithetForYear(title, year) && (
           <div className="flex items-center gap-2">
-            <span className="text-purple-500 font-medium">
-              ★ {RACE_EPITHET_MAP[title]}
+            <span className={`font-medium ${EPITHET_COLORS[getEpithetForYear(title, year)!]}`}>
+              ★ {getEpithetForYear(title, year)}
             </span>
           </div>
         )}
