@@ -143,6 +143,7 @@ def main():
 def hotkey_listener():
   while True:
     keyboard.wait(bot.hotkey)
+    bot.bot_start_time = time.time()
     if not bot.is_bot_running:
       print("[BOT] Starting...")
       bot.is_bot_running = True
@@ -164,7 +165,7 @@ def is_port_available(host, port):
 
 def start_server():
   host = "127.0.0.1"
-  start_port = 8000
+  start_port = 8001
   end_port = 8010
   for port in range(start_port, end_port):
     if is_port_available(host, port):

@@ -22,7 +22,7 @@ Then in the same folder, type `py main.py` and the bot should start the server. 
 
 If you don't understand any part of this, a bit of googling might help (like how to use powershell in windows or the terminal in linux / mac), the rest should be easy to do.
 
-If you want to change configs etc, go to your browser and type "http://127.0.0.1:8000" then press enter and it should open the configuration web page if the bot is running.
+If you want to change configs etc, go to your browser and type "http://127.0.0.1:8001" then press enter and it should open the configuration web page if the bot is running.
 
 For anything that's giving you trouble, ask on Discord, I'm usually active there.
 
