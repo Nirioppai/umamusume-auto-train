@@ -292,6 +292,16 @@ cd web && npm run build   # outputs to web/dist/
 | 5   | `web/src/components/set-up/SetUpSection.tsx`   | Added Scenario selector dropdown in Trainer Set-Up section; fetches available/selected from `/config/scenario`, saves on change, shows "Auto-detect" option for empty selection  |
 | 6   | `web/dist/app.js`, `web/dist/assets/index.css` | Rebuilt frontend bundle to ship UI changes                                                                                                                                       |
 
+### 2026-03-20 — Race schedule epithet indicators
+
+| # | File(s) | What changed |
+|---|---------|-------------|
+| 1 | `constants/epithets.json` _(new)_ | Added JSON file mapping epithet names (Classic Triple Crown, Triple Tiara, Senior Spring/Autumn Triple Crown) to their constituent race names |
+| 2 | `web/src/data/epithets.ts` _(new)_ | Added TypeScript module exporting `EPITHETS` and `RACE_EPITHET_MAP` (flat race→epithet lookup) for use in React components |
+| 3 | `web/src/components/race-schedule/race-schedule/RaceDateCard.tsx` | Added epithet name row below race info on selected-race trigger cards |
+| 4 | `web/src/components/race-schedule/race-schedule/RaceCard.tsx` | Added epithet name row (★ prefixed, purple) in the dialog race card above the fans row |
+| 5 | `web/dist/app.js`, `web/dist/assets/index.css` | Rebuilt frontend bundle to ship UI changes |
+
 ### 2026-03-20 — Race schedule UI improvements
 
 | #   | File(s)                                                           | What changed                                                                                                                                                                                                                                                                  |

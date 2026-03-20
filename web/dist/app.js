@@ -32953,6 +32953,35 @@ function RaceFilters({ filterState }) {
     ] })
   ] });
 }
+const EPITHETS = {
+  "Classic Triple Crown": [
+    "Satsuki Sho",
+    "Tokyo Yushun Japanese Derby",
+    "Kikuka Sho"
+  ],
+  "Triple Tiara": ["Oka Sho", "Japanese Oaks", "Shuka Sho"],
+  "Senior Spring Triple Crown": [
+    "Osaka Hai",
+    "Tenno Sho Spring",
+    "Takarazuka Kinen"
+  ],
+  "Senior Autumn Triple Crown": [
+    "Tenno Sho Autumn",
+    "Japan Cup",
+    "Arima Kinen"
+  ]
+};
+const RACE_EPITHET_MAP = Object.entries(
+  EPITHETS
+).reduce(
+  (acc, [epithet, races]) => {
+    races.forEach((race) => {
+      acc[race] = epithet;
+    });
+    return acc;
+  },
+  {}
+);
 function RaceCard({
   title,
   race,
@@ -33023,6 +33052,10 @@ function RaceCard({
             "Sparks: ",
             race.sparks.join(", ")
           ] }) }) }),
+          RACE_EPITHET_MAP[title] && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex items-center gap-2", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "text-purple-500 font-medium", children: [
+            "★ ",
+            RACE_EPITHET_MAP[title]
+          ] }) }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 pt-2 border-t", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(Users, { className: "w-4 h-4" }),
             /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "text-foreground font-medium", children: [
@@ -33089,7 +33122,8 @@ function RaceDateCard({
                       " ",
                       races[r2.name].distance.type
                     ] })
-                  ] })
+                  ] }),
+                  RACE_EPITHET_MAP[r2.name] && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[10px] text-purple-400 text-center leading-tight w-full", children: RACE_EPITHET_MAP[r2.name] })
                 ]
               },
               r2.name + i

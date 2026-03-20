@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users } from "lucide-react";
 import type { RaceType } from "@/types/race.type";
+import { RACE_EPITHET_MAP } from "@/data/epithets";
 
 type Props = {
   title: string;
@@ -91,6 +92,14 @@ export default function RaceCard({
             <span>Sparks: {race.sparks.join(", ")}</span>
           </div>
         </div>
+
+        {RACE_EPITHET_MAP[title] && (
+          <div className="flex items-center gap-2">
+            <span className="text-purple-500 font-medium">
+              ★ {RACE_EPITHET_MAP[title]}
+            </span>
+          </div>
+        )}
 
         <div className="flex items-center gap-2 pt-2 border-t">
           <Users className="w-4 h-4" />

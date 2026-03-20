@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import type { RaceScheduleType, RaceType } from '@/types/race.type';
 import RaceCard from './RaceCard';
 import { Calendar, ThermometerSun } from 'lucide-react';
+import { RACE_EPITHET_MAP } from '@/data/epithets';
 
 type Props = {
   date: string;
@@ -94,6 +95,11 @@ export default function RaceDateCard({
                         </span>
                       )}
                     </div>
+                    {RACE_EPITHET_MAP[r.name] && (
+                      <span className='text-[10px] text-purple-400 text-center leading-tight w-full'>
+                        {RACE_EPITHET_MAP[r.name]}
+                      </span>
+                    )}
                   </div>
                 ))
               ) : (
