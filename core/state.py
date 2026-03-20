@@ -72,8 +72,7 @@ def collect_main_state():
   debug(f"Main state collection done.")
   return state_object
 
-def collect_training_state(state_object, training_function_name):
-  check_stat_gains = False
+def collect_training_state(state_object, training_function_name, check_stat_gains=False):
   if training_function_name == "meta_training" or training_function_name == "most_stat_gain":
     check_stat_gains = True
 
@@ -101,10 +100,10 @@ def collect_training_state(state_object, training_function_name):
       training_results[name].update(get_support_card_data())
 
     debug(f"Training results: {training_results}")
-    
-    training_results = filter_training_lock(training_results)
+    training_locked, training_results = filter_training_lock(training_results)
     device_action.locate_and_click("assets/buttons/back_btn.png", min_search_time=get_secs(1), region_ltrb=constants.SCREEN_BOTTOM_BBOX)
     state_object["training_results"] = training_results
+    state_object["training_locked"] = training_locked
 
   debug(f"State object: {state_object}")
   return state_object
@@ -124,7 +123,7 @@ def filter_training_lock(training_results):
 
     debug(f"Training results after removal: {training_results}")
 
-  return training_results
+  return training_locked, training_results
 
 def training_fingerprint(training):
   fp = []
@@ -620,8 +619,9 @@ def filter_race_list(state):
         constants.RACES[date].append(race)
   debug(f"Races after filtering: {constants.RACES}")
 
+import copy
 def filter_race_schedule(state):
-  config.RACE_SCHEDULE = config.RACE_SCHEDULE_CONF.copy()
+  config.RACE_SCHEDULE = copy.deepcopy(config.RACE_SCHEDULE_CONF)
   debug(f"Schedule before filtering: {config.RACE_SCHEDULE}")
   schedule = {}
   for race in config.RACE_SCHEDULE:
@@ -629,15 +629,21 @@ def filter_race_schedule(state):
     if date_long not in schedule:
       schedule[date_long] = []
     schedule[date_long].append(race)
-  config.RACE_SCHEDULE = schedule
-  for date in schedule:
+  config.RACE_SCHEDULE = copy.deepcopy(schedule)
+
+  for date in config.RACE_SCHEDULE:
+    valid_names = {k["name"] for k in constants.RACES[date]}
+
+    new_list = []
     for race in schedule[date]:
-      if race["name"] not in [k["name"] for k in constants.RACES[date]]:
-        schedule[date].remove(race)
-      else:
-        # find race name in constants.ALL_RACES[date] and get fans_gained
+      if race["name"] in valid_names:
         for race_data in constants.ALL_RACES[date]:
           if race_data["name"] == race["name"]:
             race["fans_gained"] = race_data["fans"]["gained"]
             break
+
+        new_list.append(race)
+
+    schedule[date] = new_list
+  config.RACE_SCHEDULE = copy.deepcopy(schedule)
   debug(f"Schedule after filtering: {config.RACE_SCHEDULE}")
