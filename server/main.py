@@ -16,6 +16,7 @@ from server.legacy_config_store import (
 )
 from server.theme_store import save_theme
 from server.setup_store import load_setup_config, save_setup_config
+from utils.scenario_store import load_scenarios, save_selected_scenario, AVAILABLE_SCENARIOS
 from server.config_store import (
   list_configs,
   load_named_config,
@@ -112,6 +113,18 @@ def get_setup_config():
 def update_setup_config(new_setup_config: dict):
   save_setup_config(new_setup_config)
   return {"status": "success", "data": new_setup_config}
+
+@app.get("/config/scenario")
+def get_scenario():
+  return load_scenarios()
+
+@app.post("/config/scenario")
+def update_scenario(payload: dict):
+  scenario = payload.get("selected", "")
+  if scenario not in [""] + AVAILABLE_SCENARIOS:
+    raise HTTPException(status_code=400, detail="Invalid scenario name")
+  save_selected_scenario(scenario)
+  return {"status": "success", "selected": scenario}
 
 @app.get("/config/applied-preset")
 def get_applied_preset():

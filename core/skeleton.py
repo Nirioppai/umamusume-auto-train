@@ -24,6 +24,7 @@ import utils.device_action_wrapper as device_action
 
 from core.strategies import Strategy
 from utils.adb_actions import init_adb
+from utils.scenario_store import load_selected_scenario
 
 def cache_templates(templates):
   cache={}
@@ -92,7 +93,10 @@ def career_lobby(dry_run_turn=False):
   action_count=0
   sleep(1)
   bot.PREFERRED_POSITION_SET = False
-  constants.SCENARIO_NAME = ""
+  saved_scenario = load_selected_scenario()
+  constants.SCENARIO_NAME = saved_scenario
+  if saved_scenario:
+    info(f"Loaded scenario from config: {saved_scenario}")
   clear_aptitudes_cache()
   strategy = Strategy()
   init_adb()

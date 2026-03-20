@@ -27546,6 +27546,11 @@ function Tooltips({ children }) {
     /* @__PURE__ */ jsxRuntimeExports.jsx(TooltipContent, { style: { whiteSpace: "pre-line" }, children })
   ] });
 }
+const SCENARIO_LABELS = {
+  mant: "Make a New Track / Trackblazer",
+  unity: "Unity Cup",
+  ura: "URA Finale"
+};
 function SetUpSection({ config: config2, updateConfig }) {
   const {
     window_name: window_name2,
@@ -27560,6 +27565,8 @@ function SetUpSection({ config: config2, updateConfig }) {
     notification_volume: notification_volume2
   } = config2;
   const [notificationSounds, setNotificationSounds] = reactExports.useState([]);
+  const [availableScenarios, setAvailableScenarios] = reactExports.useState([]);
+  const [selectedScenario, setSelectedScenario] = reactExports.useState("");
   reactExports.useEffect(() => {
     fetch("/notifs").then((res) => res.json()).then((data) => {
       if (Array.isArray(data)) {
@@ -27567,12 +27574,46 @@ function SetUpSection({ config: config2, updateConfig }) {
       }
     }).catch((err) => console.error("Failed to fetch notification sounds", err));
   }, []);
+  reactExports.useEffect(() => {
+    fetch("/config/scenario").then((res) => res.json()).then((data) => {
+      if (Array.isArray(data.available))
+        setAvailableScenarios(data.available);
+      setSelectedScenario(data.selected ?? "");
+    }).catch((err) => console.error("Failed to fetch scenario config", err));
+  }, []);
+  const handleScenarioChange = reactExports.useCallback((value) => {
+    const next = value === "__auto__" ? "" : value;
+    setSelectedScenario(next);
+    fetch("/config/scenario", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ selected: next })
+    }).catch((err) => console.error("Failed to save scenario", err));
+  }, []);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "section-card", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs("h2", { className: "text-3xl font-semibold mb-6 flex items-center gap-3", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(Cog, { className: "text-primary" }),
       "Trainer Set-Up"
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 lg:grid-cols-3 gap-2", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: "uma-label col-span-3", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-base", children: "Scenario" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          Select,
+          {
+            value: selectedScenario === "" ? "__auto__" : selectedScenario,
+            onValueChange: handleScenarioChange,
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(SelectTrigger, { className: "w-48", children: /* @__PURE__ */ jsxRuntimeExports.jsx(SelectValue, { placeholder: "Select scenario" }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs(SelectContent, { children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: "__auto__", children: "Auto-detect" }),
+                availableScenarios.map((s) => /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: s, children: SCENARIO_LABELS[s] ?? s }, s))
+              ] })
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltips, { children: "Select the scenario you are currently playing.\n            This persists across bot restarts so it won't need to re-detect on every F1 press.\n            Set to Auto-detect to let the bot identify the scenario automatically." })
+      ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: "uma-label col-span-3", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-base", children: "Sleep Time Multiplier" }),
         /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -27603,7 +27644,14 @@ function SetUpSection({ config: config2, updateConfig }) {
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-base", children: "Window Name" }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltips, { children: "If you're using an emulator but not ADB, set this to your emulator's window name (case-sensitive).\n               Otherwise this has no effect on Steam or ADB versions." })
         ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { className: "w-48", value: window_name2, onChange: (e) => updateConfig("window_name", e.target.value) })
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          Input,
+          {
+            className: "w-48",
+            value: window_name2,
+            onChange: (e) => updateConfig("window_name", e.target.value)
+          }
+        )
       ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: `uma-label ${use_adb2 ? "" : "disabled"}`, children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-base", children: "Device ID" }),
@@ -27630,62 +27678,113 @@ function SetUpSection({ config: config2, updateConfig }) {
         /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltips, { children: "Uses GPU acceleration for EasyOCR if available. Disable this if GPU OCR causes crashes or your environment does not support CUDA." })
       ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: "col-span-3 uma-label", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx(Checkbox, { checked: notifications_enabled2, onCheckedChange: () => updateConfig("notifications_enabled", !notifications_enabled2) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          Checkbox,
+          {
+            checked: notifications_enabled2,
+            onCheckedChange: () => updateConfig("notifications_enabled", !notifications_enabled2)
+          }
+        ),
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-base", children: "Enable Notification Sounds" }),
         /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltips, { children: "Enables sounds to play as notifications. You can use custom sounds by adding them to assets/notifications folder of the bot." })
       ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: `uma-label ${notifications_enabled2 ? "" : "disabled"}`, children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-2 items-center", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-base", children: "Info Sound" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltips, { children: "Plays for other things, currently unused (v1.3.44)." })
-        ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs(Select, { value: info_notification2, onValueChange: (v) => updateConfig("info_notification", v), children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(SelectTrigger, { className: "w-48", children: /* @__PURE__ */ jsxRuntimeExports.jsx(SelectValue, { placeholder: "Select sound" }) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(SelectContent, { children: notificationSounds.map((sound) => /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: sound, children: sound }, sound)) })
-        ] })
-      ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: `uma-label ${notifications_enabled2 ? "" : "disabled"}`, children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-2 items-center", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-base", children: "Error Sound" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltips, { children: "Plays when the bot gets stuck." })
-        ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs(Select, { value: error_notification2, onValueChange: (v) => updateConfig("error_notification", v), children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(SelectTrigger, { className: "w-48", children: /* @__PURE__ */ jsxRuntimeExports.jsx(SelectValue, { placeholder: "Select sound" }) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(SelectContent, { children: notificationSounds.map((sound) => /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: sound, children: sound }, sound)) })
-        ] })
-      ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: `uma-label ${notifications_enabled2 ? "" : "disabled"}`, children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-2 items-center", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-base", children: "Success Sound" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltips, { children: "Plays when the bot has finished a run." })
-        ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs(Select, { value: success_notification2, onValueChange: (v) => updateConfig("success_notification", v), children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(SelectTrigger, { className: "w-48", children: /* @__PURE__ */ jsxRuntimeExports.jsx(SelectValue, { placeholder: "Select sound" }) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(SelectContent, { children: notificationSounds.map((sound) => /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: sound, children: sound }, sound)) })
-        ] })
-      ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: `uma-label ${notifications_enabled2 ? "" : "disabled"} col-span-3`, children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-4", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-base min-w-[160px]", children: "Notification Volume" }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "input",
-          {
-            type: "range",
-            min: 0,
-            max: 1,
-            step: "any",
-            value: notification_volume2,
-            onChange: (e) => updateConfig(
-              "notification_volume",
-              Math.round(parseFloat(e.target.value) * 100) / 100
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "label",
+        {
+          className: `uma-label ${notifications_enabled2 ? "" : "disabled"}`,
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-2 items-center", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-base", children: "Info Sound" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltips, { children: "Plays for other things, currently unused (v1.3.44)." })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              Select,
+              {
+                value: info_notification2,
+                onValueChange: (v) => updateConfig("info_notification", v),
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(SelectTrigger, { className: "w-48", children: /* @__PURE__ */ jsxRuntimeExports.jsx(SelectValue, { placeholder: "Select sound" }) }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(SelectContent, { children: notificationSounds.map((sound) => /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: sound, children: sound }, sound)) })
+                ]
+              }
+            )
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "label",
+        {
+          className: `uma-label ${notifications_enabled2 ? "" : "disabled"}`,
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-2 items-center", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-base", children: "Error Sound" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltips, { children: "Plays when the bot gets stuck." })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              Select,
+              {
+                value: error_notification2,
+                onValueChange: (v) => updateConfig("error_notification", v),
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(SelectTrigger, { className: "w-48", children: /* @__PURE__ */ jsxRuntimeExports.jsx(SelectValue, { placeholder: "Select sound" }) }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(SelectContent, { children: notificationSounds.map((sound) => /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: sound, children: sound }, sound)) })
+                ]
+              }
+            )
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "label",
+        {
+          className: `uma-label ${notifications_enabled2 ? "" : "disabled"}`,
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-2 items-center", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-base", children: "Success Sound" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltips, { children: "Plays when the bot has finished a run." })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              Select,
+              {
+                value: success_notification2,
+                onValueChange: (v) => updateConfig("success_notification", v),
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(SelectTrigger, { className: "w-48", children: /* @__PURE__ */ jsxRuntimeExports.jsx(SelectValue, { placeholder: "Select sound" }) }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(SelectContent, { children: notificationSounds.map((sound) => /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: sound, children: sound }, sound)) })
+                ]
+              }
+            )
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "label",
+        {
+          className: `uma-label ${notifications_enabled2 ? "" : "disabled"} col-span-3`,
+          children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-4", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-base min-w-[160px]", children: "Notification Volume" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "input",
+              {
+                type: "range",
+                min: 0,
+                max: 1,
+                step: "any",
+                value: notification_volume2,
+                onChange: (e) => updateConfig(
+                  "notification_volume",
+                  Math.round(parseFloat(e.target.value) * 100) / 100
+                ),
+                className: "w-64 accent-primary"
+              }
             ),
-            className: "w-64 accent-primary"
-          }
-        ),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "w-14 text-right tabular-nums", children: [
-          Math.round(notification_volume2 * 100),
-          "%"
-        ] })
-      ] }) })
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "w-14 text-right tabular-nums", children: [
+              Math.round(notification_volume2 * 100),
+              "%"
+            ] })
+          ] })
+        }
+      )
     ] })
   ] });
 }

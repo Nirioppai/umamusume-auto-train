@@ -7,6 +7,7 @@ PLAN.md
 PLAN_PAST.md
 old_configs.json
 config/*
+web/dist/*
 
 # Logs
 logs
