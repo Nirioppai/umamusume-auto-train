@@ -8,6 +8,7 @@ PLAN_PAST.md
 old_configs.json
 config/*
 web/dist/*
+constants/scenarios.json
 
 # Logs
 logs
