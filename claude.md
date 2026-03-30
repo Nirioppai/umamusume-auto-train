@@ -281,6 +281,14 @@ cd web && npm run build   # outputs to web/dist/
 
 ## Updates (Latest entries are listed first)
 
+### 2026-03-30 — Resolve merge conflicts with upstream/unity_cup_beta
+
+| # | File(s) | What changed |
+|---|---------|-------------|
+| 1 | `core/bot.py` | Kept `bot_start_time = None` (local, for timed logging) and added `instance = 1` from upstream |
+| 2 | `server/main.py` | Kept local `/config/scenario` GET+POST endpoints and added upstream's `/api/webhook` POST endpoint |
+| 3 | `web/src/components/set-up/SetUpSection.tsx` | Kept local `useCallback`, `SCENARIO_LABELS`, and single-quote style; added upstream's `WebhookSettings` import |
+
 ### 2026-03-20 — Persist scenario selection across bot restarts
 
 | #   | File(s)                                        | What changed                                                                                                                                                                     |
