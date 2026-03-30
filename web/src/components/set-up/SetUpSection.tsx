@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from '../ui/select';
 import { useEffect, useState, useCallback } from 'react';
+import WebhookSettings from './WebhookSettings';
 
 const SCENARIO_LABELS: Record<string, string> = {
   mant: 'Make a New Track / Trackblazer',
@@ -286,6 +287,7 @@ export default function SetUpSection({ config, updateConfig }: Props) {
             </span>
           </div>
         </label>
+        <WebhookSettings />
       </div>
     </div>
   );

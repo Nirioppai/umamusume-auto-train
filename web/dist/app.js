@@ -12639,56 +12639,32 @@ function useConfigPreset() {
     let isMounted = true;
     const fetchConfigs = async () => {
       try {
-        const res = await fetch("/configs");
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        const data = await res.json();
+        const [configsRes, appliedRes] = await Promise.all([
+          fetch("/configs"),
+          fetch("/config/applied-preset")
+        ]);
+        if (!configsRes.ok) throw new Error(`HTTP error! status: ${configsRes.status}`);
+        const data = await configsRes.json();
         const normalized = Array.isArray(data?.configs) ? data.configs.map(normalizeConfigEntry).filter(isConfigEntry) : [];
+        let appliedId = "";
+        if (appliedRes.ok) {
+          const appliedData = await appliedRes.json();
+          appliedId = typeof appliedData?.preset_id === "string" ? appliedData.preset_id : "";
+        }
         if (!isMounted) return;
         setConfigs(normalized);
-        if (normalized.length > 0) {
-          setActiveConfigId((prev) => prev || normalized[0].id);
-        } else {
-          setActiveConfigId("");
-        }
+        setAppliedPresetIdState(appliedId);
+        const initialId = (appliedId && normalized.some((entry) => entry.id === appliedId) ? appliedId : "") || normalized[0]?.id || "";
+        setActiveConfigId(initialId);
       } catch (error) {
-        console.error("Failed to load configs:", error);
+        console.error("Failed to initialize configuration presets:", error);
       }
     };
-    fetchConfigs();
+    void fetchConfigs();
     return () => {
       isMounted = false;
     };
   }, []);
-  reactExports.useEffect(() => {
-    let isMounted = true;
-    const fetchAppliedPreset = async () => {
-      try {
-        const res = await fetch("/config/applied-preset");
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        const data = await res.json();
-        if (!isMounted) return;
-        setAppliedPresetIdState(typeof data?.preset_id === "string" ? data.preset_id : "");
-      } catch (error) {
-        console.error("Failed to load applied preset:", error);
-      }
-    };
-    void fetchAppliedPreset();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-  const updatePreset = (index2, newConfig) => {
-    setConfigs((prev) => {
-      if (index2 < 0 || index2 >= prev.length) return prev;
-      const next = [...prev];
-      next[index2] = {
-        ...next[index2],
-        name: newConfig.config_name || next[index2].name,
-        config: newConfig
-      };
-      return next;
-    });
-  };
   const savePresetById = reactExports.useCallback(async (presetId, config2) => {
     const res = await fetch(`/configs/${presetId}`, {
       method: "PUT",
@@ -12757,37 +12733,34 @@ function useConfigPreset() {
       alert("Could not delete config. At least one config file must remain.");
     }
   }, [activeConfigId]);
-  const setAppliedPresetId = reactExports.useCallback(async (presetId) => {
-    const res = await fetch("/config/applied-preset", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ preset_id: presetId })
-    });
-    if (!res.ok) {
-      throw new Error(`Failed to save applied preset id. HTTP status: ${res.status}`);
-    }
-    setAppliedPresetIdState(presetId);
-  }, []);
   const activeIndex = configs.findIndex((entry) => entry.id === activeConfigId);
   const resolvedIndex = activeIndex === -1 ? 0 : activeIndex;
   const activeConfig = configs[resolvedIndex]?.config;
+  const setActiveConfig = reactExports.useCallback((presetId) => {
+    setActiveConfigId(presetId);
+  }, []);
+  const applyPreset = reactExports.useCallback(async (presetId) => {
+    const res = await fetch(`/configs/${presetId}/apply`, {
+      method: "POST"
+    });
+    if (!res.ok) {
+      throw new Error(`Failed to apply preset. HTTP status: ${res.status}`);
+    }
+    setAppliedPresetIdState(presetId);
+  }, []);
   return {
     activeIndex: resolvedIndex,
     activeConfig,
     activeConfigId,
     appliedPresetId,
     presets: configs,
-    setActiveIndex: (index2) => {
-      if (index2 < 0 || index2 >= configs.length) return;
-      setActiveConfigId(configs[index2].id);
-    },
-    updatePreset,
+    setActiveConfig,
     savePresetById,
     savePreset,
     createPreset,
     duplicatePreset,
     deletePreset,
-    setAppliedPresetId
+    applyPreset
   };
 }
 function useConfig(defaultConfig) {
@@ -12809,7 +12782,7 @@ function useConfig(defaultConfig) {
       });
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       await res.json();
-      triggerToast("Configuration saved successfully!");
+      triggerToast("Configuration changed successfully!");
     } catch (error) {
       console.error(error);
       triggerToast("Failed to save configuration.", true);
@@ -17183,7 +17156,7 @@ function validateConfig(data) {
   }
   return { success: true, data: parsed.data };
 }
-const SETUP_KEYS$1 = [
+const SETUP_KEYS = [
   "sleep_time_multiplier",
   "use_adb",
   "window_name",
@@ -17211,7 +17184,7 @@ function useImportConfig({
       const text = await file.text();
       const json = JSON.parse(text);
       const normalizedImport = json && typeof json === "object" ? { ...json } : {};
-      for (const key of SETUP_KEYS$1) {
+      for (const key of SETUP_KEYS) {
         if (!(key in normalizedImport)) {
           normalizedImport[key] = activeConfig[key];
         }
@@ -27540,10 +27513,84 @@ function TooltipContent({ className, sideOffset = 0, children, ...props }) {
     }
   ) });
 }
-function Tooltips({ children }) {
+const sizeClasses = {
+  default: "size-5",
+  xs: "size-3",
+  sm: "size-4",
+  lg: "size-6"
+};
+function Tooltips({ children, size: size2 = "default" }) {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(Tooltip, { children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(TooltipTrigger, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(CircleQuestionMark, { size: 20 }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(TooltipTrigger, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(CircleQuestionMark, { className: sizeClasses[size2] }) }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(TooltipContent, { style: { whiteSpace: "pre-line" }, children })
+  ] });
+}
+const WEBHOOK_STORAGE_KEY = "webhook_url";
+const PROGRESS_STORAGE_KEY = "webhook_progress_enabled";
+function readStoredUrl() {
+  return localStorage.getItem(WEBHOOK_STORAGE_KEY) || "";
+}
+function readStoredProgress() {
+  return localStorage.getItem(PROGRESS_STORAGE_KEY) !== "false";
+}
+function syncToServer(url, progress) {
+  fetch("/api/webhook", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ webhook_url: url, webhook_progress_enabled: progress })
+  }).catch(console.error);
+}
+function persistAndSync(url, progress) {
+  localStorage.setItem(WEBHOOK_STORAGE_KEY, url);
+  localStorage.setItem(PROGRESS_STORAGE_KEY, progress.toString());
+  syncToServer(url, progress);
+}
+function WebhookSettings() {
+  const [webhookUrl, setWebhookUrl] = reactExports.useState(readStoredUrl);
+  const [progressEnabled, setProgressEnabled] = reactExports.useState(readStoredProgress);
+  const hasSynced = reactExports.useRef(false);
+  reactExports.useEffect(() => {
+    if (hasSynced.current) return;
+    hasSynced.current = true;
+    syncToServer(readStoredUrl(), readStoredProgress());
+  }, []);
+  const commitUrl = () => {
+    persistAndSync(webhookUrl, progressEnabled);
+  };
+  const toggleProgress = () => {
+    const next = !progressEnabled;
+    setProgressEnabled(next);
+    persistAndSync(webhookUrl, next);
+  };
+  const hasWebhook = !!webhookUrl.trim();
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: "col-span-3 uma-label", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-base min-w-[160px]", children: "Discord Webhook URL" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Input,
+        {
+          type: "text",
+          className: "w-full flex-1",
+          value: webhookUrl,
+          onChange: (e) => setWebhookUrl(e.target.value),
+          onBlur: commitUrl,
+          placeholder: "https://discord.com/api/webhooks/..."
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltips, { children: "Sends Discord notifications when the bot starts, stops, gets stuck, or purchases skills." })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: `uma-label ${hasWebhook ? "" : "disabled"}`, children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Checkbox,
+        {
+          checked: progressEnabled,
+          disabled: !hasWebhook,
+          onCheckedChange: toggleProgress
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-base", children: "Yearly Progress Updates" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltips, { children: "Sends a stat snapshot at the start of Classic Year, Senior Year, and URA Finals." })
+    ] })
   ] });
 }
 const SCENARIO_LABELS = {
@@ -27784,7 +27831,8 @@ function SetUpSection({ config: config2, updateConfig }) {
             ] })
           ] })
         }
-      )
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(WebhookSettings, {})
     ] })
   ] });
 }
@@ -39133,18 +39181,6 @@ function TimelineSection({ config: config2, updateConfig }) {
     ] })
   ] });
 }
-const SETUP_KEYS = [
-  "sleep_time_multiplier",
-  "use_adb",
-  "window_name",
-  "device_id",
-  "ocr_use_gpu",
-  "notifications_enabled",
-  "info_notification",
-  "error_notification",
-  "success_notification",
-  "notification_volume"
-];
 const pickSetupConfig = (config2) => ({
   sleep_time_multiplier: config2.sleep_time_multiplier,
   use_adb: config2.use_adb,
@@ -39230,16 +39266,16 @@ function App() {
     activeConfig,
     activeConfigId,
     presets,
-    setActiveIndex,
+    setActiveConfig,
     savePresetById,
     savePreset,
     createPreset,
     duplicatePreset,
     deletePreset,
     appliedPresetId,
-    setAppliedPresetId
+    applyPreset
   } = useConfigPreset();
-  const { config: config2, setConfig, saveConfig, toast } = useConfig(activeConfig ?? defaultConfig);
+  const { config: config2, setConfig, toast } = useConfig(activeConfig ?? defaultConfig);
   const { fileInputRef, openFileDialog, handleImport } = useImportConfig({
     activeConfig: config2,
     createPreset,
@@ -39260,13 +39296,21 @@ function App() {
   }, []);
   reactExports.useEffect(() => {
     if (presets[activeIndex]) {
-      setConfig(mergeConfigWithSetup(presets[activeIndex].config ?? defaultConfig, setupConfig));
+      setConfig(
+        mergeConfigWithSetup(
+          presets[activeIndex].config ?? defaultConfig,
+          setupConfig
+        )
+      );
     } else {
       setConfig(mergeConfigWithSetup(defaultConfig, setupConfig));
     }
   }, [activeIndex, defaultConfig, presets, setConfig, setupConfig]);
   const baselineConfig = reactExports.useMemo(
-    () => mergeConfigWithSetup(presets[activeIndex]?.config ?? defaultConfig, setupConfig),
+    () => mergeConfigWithSetup(
+      presets[activeIndex]?.config ?? defaultConfig,
+      setupConfig
+    ),
     [activeIndex, defaultConfig, presets, setupConfig]
   );
   const isDirty = reactExports.useMemo(
@@ -39281,12 +39325,19 @@ function App() {
   reactExports.useEffect(() => {
     fetch("/themes").then((res) => res.json()).then((data) => setThemes(data)).catch((err) => console.error("Failed to load themes:", err));
   }, []);
-  const updateConfig = reactExports.useCallback((key, value) => {
-    setConfig((prev) => ({ ...prev, [key]: value }));
-  }, [setConfig]);
+  const updateConfig = reactExports.useCallback(
+    (key, value) => {
+      setConfig((prev) => ({ ...prev, [key]: value }));
+    },
+    [setConfig]
+  );
   const exportCurrentConfig = reactExports.useCallback(() => {
-    const fileNameBase = sanitizeFileName(config2.config_name || activeConfigId || "config");
-    const blob = new Blob([JSON.stringify(config2, null, 2)], { type: "application/json" });
+    const fileNameBase = sanitizeFileName(
+      config2.config_name || activeConfigId || "config"
+    );
+    const blob = new Blob([JSON.stringify(config2, null, 2)], {
+      type: "application/json"
+    });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
@@ -39296,21 +39347,26 @@ function App() {
     anchor.remove();
     URL.revokeObjectURL(url);
   }, [config2, activeConfigId]);
-  const switchToPresetById = reactExports.useCallback((presetId) => {
-    const idx = presets.findIndex((preset) => preset.id === presetId);
-    if (idx < 0) return;
-    setActiveIndex(idx);
-    setIsEditing(false);
-  }, [presets, setActiveIndex]);
-  const requestPresetSwitch = reactExports.useCallback((presetId) => {
-    if (presetId === activeConfigId) return;
-    if (!isDirty) {
-      switchToPresetById(presetId);
-      return;
-    }
-    setPendingConfigSwitchId(presetId);
-    setIsDiscardDialogOpen(true);
-  }, [activeConfigId, isDirty, switchToPresetById]);
+  const switchToPresetById = reactExports.useCallback(
+    (presetId) => {
+      if (!presets.some((preset) => preset.id === presetId)) return;
+      setActiveConfig(presetId);
+      setIsEditing(false);
+    },
+    [presets, setActiveConfig]
+  );
+  const requestPresetSwitch = reactExports.useCallback(
+    (presetId) => {
+      if (presetId === activeConfigId) return;
+      if (!isDirty) {
+        switchToPresetById(presetId);
+        return;
+      }
+      setPendingConfigSwitchId(presetId);
+      setIsDiscardDialogOpen(true);
+    },
+    [activeConfigId, isDirty, switchToPresetById]
+  );
   const persistPresetAndSetup = reactExports.useCallback(async () => {
     const nextSetup = pickSetupConfig(config2);
     const configWithoutSetup = stripSetupConfig(config2);
@@ -39322,7 +39378,9 @@ function App() {
       body: JSON.stringify(nextSetup)
     });
     if (!setupRes.ok) {
-      throw new Error(`Failed to save setup config. HTTP status: ${setupRes.status}`);
+      throw new Error(
+        `Failed to save setup config. HTTP status: ${setupRes.status}`
+      );
     }
     setSetupConfig(nextSetup);
     return mergedConfig;
@@ -39337,16 +39395,15 @@ function App() {
   }, [persistPresetAndSetup]);
   const handleApplyPreset = reactExports.useCallback(async () => {
     try {
-      const mergedConfig = await persistPresetAndSetup();
-      await saveConfig(mergedConfig);
       if (activeConfigId) {
-        await setAppliedPresetId(activeConfigId);
+        await persistPresetAndSetup();
+        await applyPreset(activeConfigId);
       }
       setIsEditing(false);
     } catch (error) {
       console.error("Failed to apply preset:", error);
     }
-  }, [activeConfigId, persistPresetAndSetup, saveConfig, setAppliedPresetId]);
+  }, [activeConfigId, applyPreset, persistPresetAndSetup]);
   reactExports.useEffect(() => {
     if (!isPresetActionsOpen) return;
     const handleClickOutside = (event2) => {
@@ -39361,8 +39418,14 @@ function App() {
     if (themes.length === 0) return;
     const activeTheme = themes.find((t) => t.id === effectiveThemeId) || themes[0];
     if (activeTheme) {
-      document.documentElement.style.setProperty("--primary", activeTheme.primary);
-      document.documentElement.style.setProperty("--secondary", activeTheme.secondary);
+      document.documentElement.style.setProperty(
+        "--primary",
+        activeTheme.primary
+      );
+      document.documentElement.style.setProperty(
+        "--secondary",
+        activeTheme.secondary
+      );
       if (config2.theme !== activeTheme.id) {
         updateConfig("theme", activeTheme.id);
       }
@@ -39413,25 +39476,59 @@ function App() {
       /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "p-6 w-full py-4 self-start border-b border-border flex items-end justify-between sticky top-0 z-10 backdrop-blur-md", children: [
         isDirty && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "absolute top-3 left-1/2 -translate-x-1/2 flex items-center gap-3 px-3 py-2 rounded-full text-sm font-medium border bg-card/95 backdrop-blur-md shadow-md z-20", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-muted-foreground", children: "You have unsaved changes" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { size: "sm", className: "h-8", onClick: () => void handleSaveChanges(), children: "Save Changes" })
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            Button,
+            {
+              size: "sm",
+              className: "h-8",
+              onClick: () => void handleSaveChanges(),
+              children: "Save Changes"
+            }
+          )
         ] }),
-        toast.show && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `absolute top-14 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-1 rounded-full text-sm font-medium animate-in fade-in zoom-in duration-300 border ${toast.isError ? "bg-destructive/10 border-destructive/20 text-destructive" : "bg-primary/10 border-primary/20 text-primary"}`, children: [
-          toast.isError ? /* @__PURE__ */ jsxRuntimeExports.jsx(CircleAlert, { size: 14 }) : /* @__PURE__ */ jsxRuntimeExports.jsx(CircleCheck, { size: 14 }),
-          toast.message
-        ] }),
+        toast.show && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "div",
+          {
+            className: `absolute top-14 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-1 rounded-full text-sm font-medium animate-in fade-in zoom-in duration-300 border ${toast.isError ? "bg-destructive/10 border-destructive/20 text-destructive" : "bg-primary/10 border-primary/20 text-primary"}`,
+            children: [
+              toast.isError ? /* @__PURE__ */ jsxRuntimeExports.jsx(CircleAlert, { size: 14 }) : /* @__PURE__ */ jsxRuntimeExports.jsx(CircleCheck, { size: 14 }),
+              toast.message
+            ]
+          }
+        ),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-end justify-between w-full", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-4", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-1 relative", ref: presetActionsRef, children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "text-xs font-thin text-muted-foreground ml-1", children: "Configuration File" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "text-xs font-thin text-muted-foreground ml-1 mr-2", children: "Configuration File" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltips, { size: "xs", children: "Configs are saved as files in the bot folder under config/.\n                Set-up values are global (shared) and saved separately from these config files." }),
               /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-stretch shadow-sm bg-card rounded-md border border-input focus-within:ring-[3px] focus-within:ring-ring/50 focus-within:border-primary transition-all", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  Button,
+                  {
+                    variant: "ghost",
+                    size: "smallicon",
+                    className: `rounded-r-none border-l border-input bg-card hover:bg-accent h-10 w-10 transition-colors shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 ${isEditing ? "text-primary" : "text-muted-foreground"}`,
+                    onClick: () => setIsEditing(!isEditing),
+                    children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Pencil,
+                      {
+                        size: 14,
+                        className: isEditing ? "fill-current" : ""
+                      }
+                    )
+                  }
+                ),
                 /* @__PURE__ */ jsxRuntimeExports.jsxs(
                   Select,
                   {
                     value: activeConfigId,
                     onValueChange: requestPresetSwitch,
                     children: [
-                      /* @__PURE__ */ jsxRuntimeExports.jsx(SelectTrigger, { className: "w-auto min-w-42 bg-card rounded-r-none shadow-none border-0 transition-colors hover:bg-accent focus:ring-0 cursor-pointer", children: /* @__PURE__ */ jsxRuntimeExports.jsx(SelectValue, { placeholder: "Select Config" }) }),
-                      /* @__PURE__ */ jsxRuntimeExports.jsx(SelectContent, { children: presets.map((preset) => /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: preset.id, children: preset.name }, preset.id)) })
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(SelectTrigger, { className: "w-auto min-w-32 bg-card rounded-none shadow-none border-0 transition-colors hover:bg-accent focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer", children: /* @__PURE__ */ jsxRuntimeExports.jsx(SelectValue, { placeholder: "Select Config" }) }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(SelectContent, { children: presets.map((preset) => /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: preset.id, children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between w-full gap-4", children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: preset.name }),
+                        preset.id === appliedPresetId && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[10px] bg-primary/10 text-primary border border-primary/20 px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider", children: "Active" })
+                      ] }) }, preset.id)) })
                     ]
                   }
                 ),
@@ -39441,17 +39538,23 @@ function App() {
                     {
                       variant: "ghost",
                       size: "sm",
-                      className: "rounded-none border-l border-input bg-card hover:bg-accent h-10 px-3 transition-colors shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground",
+                      className: "rounded-l-none border-0 border-l border-input px-3 bg-card shadow-none transition-colors hover:bg-accent focus:ring-0 cursor-pointer font-normal",
                       onClick: () => setIsPresetActionsOpen((prev) => !prev),
                       title: "Manage preset files",
                       children: [
                         /* @__PURE__ */ jsxRuntimeExports.jsx(Settings2, { size: 14 }),
                         "Manage",
-                        /* @__PURE__ */ jsxRuntimeExports.jsx(ChevronDown, { size: 14, className: isPresetActionsOpen ? "rotate-180 transition-transform" : "transition-transform" })
+                        /* @__PURE__ */ jsxRuntimeExports.jsx(
+                          ChevronDown,
+                          {
+                            size: 14,
+                            className: isPresetActionsOpen ? "rotate-180 transition-transform" : "transition-transform"
+                          }
+                        )
                       ]
                     }
                   ),
-                  isPresetActionsOpen && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "absolute top-[calc(100%+0.5rem)] left-0 w-64 rounded-lg border border-border bg-background text-foreground shadow-2xl p-2 z-50", children: [
+                  isPresetActionsOpen && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "absolute translate-y-1 w-64 rounded-lg border border-border bg-popover text-foreground shadow-2xl p-2 z-50", children: [
                     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "px-2 pt-1 pb-2", children: [
                       /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm font-medium", children: "Manage Preset Files" }),
                       /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: "Create, duplicate, delete, import, or export presets." })
@@ -39460,7 +39563,7 @@ function App() {
                       Button,
                       {
                         variant: "ghost",
-                        className: "w-full justify-start h-9",
+                        className: "w-full justify-start h-9 font-normal",
                         onClick: () => {
                           setIsPresetActionsOpen(false);
                           void createPreset();
@@ -39475,7 +39578,7 @@ function App() {
                       Button,
                       {
                         variant: "ghost",
-                        className: "w-full justify-start h-9",
+                        className: "w-full justify-start h-9 font-normal",
                         disabled: !activeConfigId,
                         onClick: () => {
                           setIsPresetActionsOpen(false);
@@ -39496,7 +39599,9 @@ function App() {
                         onClick: () => {
                           setIsPresetActionsOpen(false);
                           if (presets.length <= 1) return;
-                          const ok = window.confirm("Delete current config file?");
+                          const ok = window.confirm(
+                            "Delete current config file?"
+                          );
                           if (!ok) return;
                           void deletePreset();
                           setIsEditing(false);
@@ -39554,51 +39659,68 @@ function App() {
                       }
                     )
                   ] })
-                ] }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Button,
-                  {
-                    variant: "ghost",
-                    size: "smallicon",
-                    className: `rounded-l-none border-l border-input bg-card hover:bg-accent h-10 w-10 transition-colors shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 ${isEditing ? "text-primary" : "text-muted-foreground"}`,
-                    onClick: () => setIsEditing(!isEditing),
-                    children: /* @__PURE__ */ jsxRuntimeExports.jsx(Pencil, { size: 14, className: isEditing ? "fill-current" : "" })
-                  }
-                )
-              ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("input", { type: "file", ref: fileInputRef, onChange: handleImport, className: "hidden" })
-            ] }),
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `flex w-fit gap-4 transition-all duration-300 ease-out overflow-x-hidden pb-2 -mb-2 items-end ${isEditing ? "max-w-[800px] opacity-100 translate-x-0" : "max-w-0 opacity-0 -translate-x-4 pointer-events-none"}`, children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-8 w-[1px] bg-border mb-1" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-1", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "text-xs font-thin text-muted-foreground ml-1", children: "Name" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Input,
-                  {
-                    className: "w-42 shadow-sm bg-card",
-                    value: config2.config_name,
-                    onChange: (e) => updateConfig("config_name", e.target.value)
-                  }
-                )
-              ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-1", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: "text-xs font-thin text-muted-foreground ml-1", children: [
-                  "Uma ",
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[10px] text-slate-800/40", children: "(Theme)" })
-                ] }),
-                /* @__PURE__ */ jsxRuntimeExports.jsxs(Select, { value: effectiveThemeId, onValueChange: (v) => updateConfig("theme", v), children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(SelectTrigger, { className: "min-w-42 shadow-sm bg-card", children: /* @__PURE__ */ jsxRuntimeExports.jsx(SelectValue, { placeholder: "Loading Themes..." }) }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(SelectContent, { children: themes.filter((t) => t && t.id).map((theme2) => /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: theme2.id, children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
-                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-3 h-3 rounded-full", style: { backgroundColor: theme2.primary } }),
-                    theme2.label
-                  ] }) }, theme2.id)) })
                 ] })
-              ] })
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "input",
+                {
+                  type: "file",
+                  ref: fileInputRef,
+                  onChange: handleImport,
+                  className: "hidden"
+                }
+              )
             ] }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltips, { children: "Configs are saved as files in the bot folder under config/.\n              Set-up values are global (shared) and saved separately from these config files." })
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "div",
+              {
+                className: `flex w-fit gap-4 transition-all duration-300 ease-out overflow-x-hidden pb-2 -mb-2 items-end ${isEditing ? "max-w-200 opacity-100 translate-x-0" : "max-w-0 opacity-0 -translate-x-4 pointer-events-none"}`,
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-8 w-px bg-border mb-1" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-1", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "text-xs font-thin text-muted-foreground ml-1", children: "Name" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Input,
+                      {
+                        className: "w-42 shadow-sm bg-card",
+                        value: config2.config_name,
+                        onChange: (e) => updateConfig("config_name", e.target.value)
+                      }
+                    )
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-1", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: "text-xs font-thin text-muted-foreground ml-1", children: [
+                      "Uma",
+                      " ",
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[10px] text-slate-800/40", children: "(Theme)" })
+                    ] }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                      Select,
+                      {
+                        value: effectiveThemeId,
+                        onValueChange: (v) => updateConfig("theme", v),
+                        children: [
+                          /* @__PURE__ */ jsxRuntimeExports.jsx(SelectTrigger, { className: "min-w-42 shadow-sm bg-card", children: /* @__PURE__ */ jsxRuntimeExports.jsx(SelectValue, { placeholder: "Loading Themes..." }) }),
+                          /* @__PURE__ */ jsxRuntimeExports.jsx(SelectContent, { children: themes.filter((t) => t && t.id).map((theme2) => /* @__PURE__ */ jsxRuntimeExports.jsx(SelectItem, { value: theme2.id, children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+                            /* @__PURE__ */ jsxRuntimeExports.jsx(
+                              "div",
+                              {
+                                className: "w-3 h-3 rounded-full",
+                                style: { backgroundColor: theme2.primary }
+                              }
+                            ),
+                            theme2.label
+                          ] }) }, theme2.id)) })
+                        ]
+                      }
+                    )
+                  ] })
+                ]
+              }
+            )
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex relative gap-3 pl-3", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-sm absolute top-[-1rem] end-px align-right text-muted-foreground -mt-2 w-fit whitespace-nowrap", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-sm absolute -top-4 end-px align-right text-muted-foreground -mt-2 w-fit whitespace-nowrap", children: [
               "Press ",
               /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-bold text-primary", children: "F1" }),
               " to start/stop training."
@@ -39613,9 +39735,17 @@ function App() {
                 children: isDark ? /* @__PURE__ */ jsxRuntimeExports.jsx(Sun, { size: 18 }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Moon, { size: 18 })
               }
             ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { className: "uma-btn font-bold", onClick: () => void handleApplyPreset(), children: "Apply Preset" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              Button,
+              {
+                className: "uma-btn font-bold",
+                onClick: () => void handleApplyPreset(),
+                children: "Save & Apply Preset"
+              }
+            ),
             /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-sm text-muted-foreground self-center whitespace-nowrap", children: [
-              "Currently applied: ",
+              "Currently applied:",
+              " ",
               /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-medium text-foreground", children: appliedPresetName })
             ] })
           ] })
@@ -39637,7 +39767,14 @@ function App() {
               /* @__PURE__ */ jsxRuntimeExports.jsx(DialogDescription, { children: "Saved changes will be discarded if you don't save." })
             ] }),
             /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogFooter, { children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { variant: "outline", onClick: () => setIsDiscardDialogOpen(false), children: "Cancel" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Button,
+                {
+                  variant: "outline",
+                  onClick: () => setIsDiscardDialogOpen(false),
+                  children: "Cancel"
+                }
+              ),
               /* @__PURE__ */ jsxRuntimeExports.jsx(
                 Button,
                 {

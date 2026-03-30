@@ -71,63 +71,43 @@ export function useConfigPreset() {
 
     const fetchConfigs = async () => {
       try {
-        const res = await fetch("/configs");
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        const data = await res.json();
+        const [configsRes, appliedRes] = await Promise.all([
+          fetch("/configs"),
+          fetch("/config/applied-preset"),
+        ]);
+
+        if (!configsRes.ok) throw new Error(`HTTP error! status: ${configsRes.status}`);
+        const data = await configsRes.json();
         const normalized = Array.isArray(data?.configs)
           ? data.configs.map(normalizeConfigEntry).filter(isConfigEntry)
           : [];
-        if (!isMounted) return;
-        setConfigs(normalized);
-        if (normalized.length > 0) {
-          setActiveConfigId((prev) => prev || normalized[0].id);
-        } else {
-          setActiveConfigId("");
+
+        let appliedId = "";
+        if (appliedRes.ok) {
+          const appliedData = await appliedRes.json();
+          appliedId = typeof appliedData?.preset_id === "string" ? appliedData.preset_id : "";
         }
-      } catch (error) {
-        console.error("Failed to load configs:", error);
-      }
-    };
 
-    fetchConfigs();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchAppliedPreset = async () => {
-      try {
-        const res = await fetch("/config/applied-preset");
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        const data = await res.json();
         if (!isMounted) return;
-        setAppliedPresetIdState(typeof data?.preset_id === "string" ? data.preset_id : "");
+
+        setConfigs(normalized);
+        setAppliedPresetIdState(appliedId);
+        const initialId =
+          (appliedId && normalized.some((entry: ConfigEntry) => entry.id === appliedId) ? appliedId : "") ||
+          normalized[0]?.id ||
+          "";
+        setActiveConfigId(initialId);
       } catch (error) {
-        console.error("Failed to load applied preset:", error);
+        console.error("Failed to initialize configuration presets:", error);
       }
     };
 
-    void fetchAppliedPreset();
+    void fetchConfigs();
     return () => {
       isMounted = false;
     };
   }, []);
 
-  const updatePreset = (index: number, newConfig: Config) => {
-    setConfigs((prev) => {
-      if (index < 0 || index >= prev.length) return prev;
-      const next = [...prev];
-      next[index] = {
-        ...next[index],
-        name: newConfig.config_name || next[index].name,
-        config: newConfig,
-      };
-      return next;
-    });
-  };
 
   const savePresetById = useCallback(async (presetId: string, config: Config) => {
     const res = await fetch(`/configs/${presetId}`, {
@@ -154,7 +134,7 @@ export function useConfigPreset() {
     try {
       const res = await fetch("/configs", {
         method: "POST",
-    });
+      });
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data = await res.json();
       const created = normalizeConfigEntry(data?.config);
@@ -206,21 +186,23 @@ export function useConfigPreset() {
     }
   }, [activeConfigId]);
 
-  const setAppliedPresetId = useCallback(async (presetId: string) => {
-    const res = await fetch("/config/applied-preset", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ preset_id: presetId }),
-    });
-    if (!res.ok) {
-      throw new Error(`Failed to save applied preset id. HTTP status: ${res.status}`);
-    }
-    setAppliedPresetIdState(presetId);
-  }, []);
-
   const activeIndex = configs.findIndex((entry) => entry.id === activeConfigId);
   const resolvedIndex = activeIndex === -1 ? 0 : activeIndex;
   const activeConfig = configs[resolvedIndex]?.config;
+
+  const setActiveConfig = useCallback((presetId: string) => {
+    setActiveConfigId(presetId);
+  }, []);
+
+  const applyPreset = useCallback(async (presetId: string) => {
+    const res = await fetch(`/configs/${presetId}/apply`, {
+      method: "POST",
+    });
+    if (!res.ok) {
+      throw new Error(`Failed to apply preset. HTTP status: ${res.status}`);
+    }
+    setAppliedPresetIdState(presetId);
+  }, []);
 
   return {
     activeIndex: resolvedIndex,
@@ -228,16 +210,12 @@ export function useConfigPreset() {
     activeConfigId,
     appliedPresetId,
     presets: configs,
-    setActiveIndex: (index: number) => {
-      if (index < 0 || index >= configs.length) return;
-      setActiveConfigId(configs[index].id);
-    },
-    updatePreset,
+    setActiveConfig,
     savePresetById,
     savePreset,
     createPreset,
     duplicatePreset,
     deletePreset,
-    setAppliedPresetId,
+    applyPreset,
   };
 }

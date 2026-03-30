@@ -26,6 +26,7 @@ import EnergySection from "./components/training/EnergySection";
 import MoodSection from "./components/training/MoodSection";
 import TimelineSection from "./components/skeleton/TimelineSection";
 import Tooltips from "@/components/_c/Tooltips";
+import { SETUP_KEYS, type SetupConfig } from "./constants/setupKeys";
 
 interface Theme {
   id: string;
@@ -34,22 +35,6 @@ interface Theme {
   secondary: string;
   dark: boolean;
 }
-
-const SETUP_KEYS = [
-  "sleep_time_multiplier",
-  "use_adb",
-  "window_name",
-  "device_id",
-  "ocr_use_gpu",
-  "notifications_enabled",
-  "info_notification",
-  "error_notification",
-  "success_notification",
-  "notification_volume",
-] as const;
-
-type SetupKey = (typeof SETUP_KEYS)[number];
-type SetupConfig = Pick<Config, SetupKey>;
 
 const pickSetupConfig = (config: Config): SetupConfig => ({
   sleep_time_multiplier: config.sleep_time_multiplier,
@@ -135,6 +120,8 @@ function App() {
     }
   }, [isDark]);
 
+
+
   useEffect(() => {
     fetch("/version.txt", { cache: "no-store" })
       .then(r => {
@@ -154,16 +141,16 @@ function App() {
     activeConfig,
     activeConfigId,
     presets,
-    setActiveIndex,
+    setActiveConfig,
     savePresetById,
     savePreset,
     createPreset,
     duplicatePreset,
     deletePreset,
     appliedPresetId,
-    setAppliedPresetId,
+    applyPreset,
   } = useConfigPreset();
-  const { config, setConfig, saveConfig, toast } = useConfig(activeConfig ?? defaultConfig);
+  const { config, setConfig, toast } = useConfig(activeConfig ?? defaultConfig);
   const { fileInputRef, openFileDialog, handleImport } = useImportConfig({
     activeConfig: config,
     createPreset,
@@ -231,11 +218,10 @@ function App() {
   }, [config, activeConfigId]);
 
   const switchToPresetById = useCallback((presetId: string) => {
-    const idx = presets.findIndex((preset) => preset.id === presetId);
-    if (idx < 0) return;
-    setActiveIndex(idx);
+    if (!presets.some((preset) => preset.id === presetId)) return;
+    setActiveConfig(presetId);
     setIsEditing(false);
-  }, [presets, setActiveIndex]);
+  }, [presets, setActiveConfig]);
 
   const requestPresetSwitch = useCallback((presetId: string) => {
     if (presetId === activeConfigId) return;
@@ -275,16 +261,15 @@ function App() {
 
   const handleApplyPreset = useCallback(async () => {
     try {
-      const mergedConfig = await persistPresetAndSetup();
-      await saveConfig(mergedConfig);
       if (activeConfigId) {
-        await setAppliedPresetId(activeConfigId);
+        await persistPresetAndSetup();
+        await applyPreset(activeConfigId);
       }
       setIsEditing(false);
     } catch (error) {
       console.error("Failed to apply preset:", error);
     }
-  }, [activeConfigId, persistPresetAndSetup, saveConfig, setAppliedPresetId]);
+  }, [activeConfigId, applyPreset, persistPresetAndSetup]);
 
   useEffect(() => {
     if (!isPresetActionsOpen) return;
@@ -360,20 +345,36 @@ function App() {
           <div className="flex items-end justify-between w-full">
             <div className="flex items-center gap-4">
               <div className="space-y-1 relative" ref={presetActionsRef}>
-                <label className="text-xs font-thin text-muted-foreground ml-1">Configuration File</label>
-
+                <label className="text-xs font-thin text-muted-foreground ml-1 mr-2">Configuration File</label>
+                <Tooltips size="xs">{"Configs are saved as files in the bot folder under config/.\n\
+                Set-up values are global (shared) and saved separately from these config files."}</Tooltips>
                 <div className="flex items-stretch shadow-sm bg-card rounded-md border border-input focus-within:ring-[3px] focus-within:ring-ring/50 focus-within:border-primary transition-all">
+                <Button
+                    variant="ghost"
+                    size="smallicon"
+                    className={`rounded-r-none border-l border-input bg-card hover:bg-accent h-10 w-10 transition-colors shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 ${isEditing ? "text-primary" : "text-muted-foreground"}`}
+                    onClick={() => setIsEditing(!isEditing)}
+                  >
+                    <Pencil size={14} className={isEditing ? "fill-current" : ""} />
+                  </Button>
                   <Select
                     value={activeConfigId}
                     onValueChange={requestPresetSwitch}
                   >
-                    <SelectTrigger className="w-auto min-w-42 bg-card rounded-r-none shadow-none border-0 transition-colors hover:bg-accent focus:ring-0 cursor-pointer">
+                    <SelectTrigger className="w-auto min-w-32 bg-card rounded-none shadow-none border-0 transition-colors hover:bg-accent focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer">
                       <SelectValue placeholder="Select Config" />
                     </SelectTrigger>
                     <SelectContent>
                       {presets.map((preset) => (
                         <SelectItem key={preset.id} value={preset.id}>
-                          {preset.name}
+                          <div className="flex items-center justify-between w-full gap-4">
+                            <span>{preset.name}</span>
+                            {preset.id === appliedPresetId && (
+                              <span className="text-[10px] bg-primary/10 text-primary border border-primary/20 px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                                Active
+                              </span>
+                            )}
+                          </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -382,7 +383,7 @@ function App() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="rounded-none border-l border-input bg-card hover:bg-accent h-10 px-3 transition-colors shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground"
+                      className="rounded-l-none border-0 border-l border-input px-3 bg-card shadow-none transition-colors hover:bg-accent focus:ring-0 cursor-pointer font-normal"
                       onClick={() => setIsPresetActionsOpen((prev) => !prev)}
                       title="Manage preset files"
                     >
@@ -391,14 +392,14 @@ function App() {
                       <ChevronDown size={14} className={isPresetActionsOpen ? "rotate-180 transition-transform" : "transition-transform"} />
                     </Button>
                     {isPresetActionsOpen && (
-                      <div className="absolute top-[calc(100%+0.5rem)] left-0 w-64 rounded-lg border border-border bg-background text-foreground shadow-2xl p-2 z-50">
+                      <div className="absolute translate-y-1 w-64 rounded-lg border border-border bg-popover text-foreground shadow-2xl p-2 z-50">
                         <div className="px-2 pt-1 pb-2">
                           <p className="text-sm font-medium">Manage Preset Files</p>
                           <p className="text-xs text-muted-foreground">Create, duplicate, delete, import, or export presets.</p>
                         </div>
                         <Button
                           variant="ghost"
-                          className="w-full justify-start h-9"
+                          className="w-full justify-start h-9 font-normal"
                           onClick={() => {
                             setIsPresetActionsOpen(false);
                             void createPreset();
@@ -409,7 +410,7 @@ function App() {
                         </Button>
                         <Button
                           variant="ghost"
-                          className="w-full justify-start h-9"
+                          className="w-full justify-start h-9 font-normal"
                           disabled={!activeConfigId}
                           onClick={() => {
                             setIsPresetActionsOpen(false);
@@ -472,22 +473,14 @@ function App() {
                       </div>
                     )}
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="smallicon"
-                    className={`rounded-l-none border-l border-input bg-card hover:bg-accent h-10 w-10 transition-colors shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 ${isEditing ? "text-primary" : "text-muted-foreground"}`}
-                    onClick={() => setIsEditing(!isEditing)}
-                  >
-                    <Pencil size={14} className={isEditing ? "fill-current" : ""} />
-                  </Button>
                 </div>
                 <input type="file" ref={fileInputRef} onChange={handleImport} className="hidden" />
               </div>
 
               {/* Transitioning Fields */}
-              <div className={`flex w-fit gap-4 transition-all duration-300 ease-out overflow-x-hidden pb-2 -mb-2 items-end ${isEditing ? "max-w-[800px] opacity-100 translate-x-0" : "max-w-0 opacity-0 -translate-x-4 pointer-events-none"
+              <div className={`flex w-fit gap-4 transition-all duration-300 ease-out overflow-x-hidden pb-2 -mb-2 items-end ${isEditing ? "max-w-200 opacity-100 translate-x-0" : "max-w-0 opacity-0 -translate-x-4 pointer-events-none"
                 }`}>
-                <div className="h-8 w-[1px] bg-border mb-1" />
+                <div className="h-8 w-px bg-border mb-1" />
 
                 <div className="space-y-1">
                   <label className="text-xs font-thin text-muted-foreground ml-1">Name</label>
@@ -517,13 +510,11 @@ function App() {
                   </Select>
                 </div>
               </div>
-              <Tooltips>{"Configs are saved as files in the bot folder under config/.\n\
-              Set-up values are global (shared) and saved separately from these config files."}</Tooltips>
             </div>
 
 
             <div className="flex relative gap-3 pl-3">
-              <p className="text-sm absolute top-[-1rem] end-px align-right text-muted-foreground -mt-2 w-fit whitespace-nowrap">
+              <p className="text-sm absolute -top-4 end-px align-right text-muted-foreground -mt-2 w-fit whitespace-nowrap">
                 Press <span className="font-bold text-primary">F1</span> to start/stop training.
               </p>
               <Button
@@ -535,11 +526,11 @@ function App() {
                 {isDark ? <Sun size={18} /> : <Moon size={18} />}
               </Button>
               <Button className="uma-btn font-bold" onClick={() => void handleApplyPreset()}>
-                Apply Preset
+                Save &amp; Apply Preset
               </Button>
-              <p className="text-sm text-muted-foreground self-center whitespace-nowrap">
+              {/* <p className="text-sm text-muted-foreground self-center whitespace-nowrap">
                 Currently applied: <span className="font-medium text-foreground">{appliedPresetName}</span>
-              </p>
+              </p> */}
             </div>
           </div>
         </header>
