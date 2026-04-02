@@ -281,6 +281,17 @@ cd web && npm run build   # outputs to web/dist/
 
 ## Updates (Latest entries are listed first)
 
+### 2026-04-02 — Race schedule importer with named saved schedules
+
+| # | File(s) | What changed |
+|---|---------|-------------|
+| 1 | `utils/race_schedule_store.py` _(new)_ | Added CRUD for named schedule files in `constants/races/` — list, load, save (overwrite), delete; validates names against filesystem-dangerous chars and guards against directory traversal |
+| 2 | `server/main.py` | Added 4 endpoints: `GET /race-schedules` (list names), `GET /race-schedules/{name}` (fetch raw entries), `POST /race-schedules/{name}` (save), `DELETE /race-schedules/{name}` (delete) |
+| 3 | `web/src/constants/raceSchedule.constant.ts` _(new)_ | Parser utility — `turnToDate()`, `dateToTurn()`, `parseRaceSchedule()` (stored format → `RaceScheduleType[]`), `toExportFormat()` (reverse); single middleman so format changes don't propagate elsewhere |
+| 4 | `web/src/hooks/useRaceSchedules.ts` _(new)_ | Hook exposing `scheduleNames`, `fetchSchedule`, `saveSchedule`, `deleteSchedule` against the new server endpoints |
+| 5 | `web/src/components/race-schedule/RaceImporter.tsx` _(new)_ | UI panel with Import JSON (file picker → parse → name → save), Save Current (serialize active config schedule back to export format), and a list of saved schedules with Load / Delete per entry |
+| 6 | `web/src/components/race-schedule/RaceListSection.tsx` | Added `<RaceImporter>` below the calendar; wires `onLoadSchedule` to `updateConfig("race_schedule", races)` so loading a saved schedule injects it into the active config |
+
 ### 2026-03-30 — Resolve merge conflicts with upstream/unity_cup_beta
 
 | # | File(s) | What changed |

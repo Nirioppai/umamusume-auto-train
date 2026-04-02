@@ -1,5 +1,6 @@
 import { AlertCircle, Trophy } from "lucide-react";
 import RaceSchedule from "./RaceSchedule";
+import RaceImporter from "./RaceImporter";
 import { Button } from "@/components/ui/button";
 import type { Config, UpdateConfigType } from "@/types";
 
@@ -21,7 +22,7 @@ export default function RaceScheduleSection({ config, updateConfig }: Props) {
         <Trophy className="text-primary" />
         Race Schedule
       </h2>
-      {!use_race_schedule && ( 
+      {!use_race_schedule && (
           <div className="flex flex-1 h-fit items-center justify-center">
             <div className="flex items-center h-fit gap-2 px-4 rounded-full text-sm font-medium animate-in fade-in zoom-in duration-300 border bg-primary/10 border-primary/20 text-primary -mt-1">
               <AlertCircle size={22} />
@@ -51,6 +52,10 @@ export default function RaceScheduleSection({ config, updateConfig }: Props) {
             )
           }
           clearRaceSchedule={() => updateConfig("race_schedule", [])}
+        />
+        <RaceImporter
+          currentRaceSchedule={race_schedule}
+          onLoadSchedule={(races) => updateConfig("race_schedule", races)}
         />
     </div>
   );

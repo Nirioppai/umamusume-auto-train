@@ -17291,7 +17291,7 @@ const createLucideIcon = (iconName, iconNode) => {
   Component.displayName = toPascalCase(iconName);
   return Component;
 };
-const __iconNode$F = [
+const __iconNode$I = [
   [
     "path",
     {
@@ -17312,8 +17312,8 @@ const __iconNode$F = [
   ["circle", { cx: "20", cy: "21", r: ".5", key: "yhc1fs" }],
   ["circle", { cx: "20", cy: "8", r: ".5", key: "1e43v0" }]
 ];
-const BrainCircuit = createLucideIcon("brain-circuit", __iconNode$F);
-const __iconNode$E = [
+const BrainCircuit = createLucideIcon("brain-circuit", __iconNode$I);
+const __iconNode$H = [
   ["rect", { width: "18", height: "18", x: "3", y: "4", rx: "2", key: "1hopcy" }],
   ["path", { d: "M16 2v4", key: "4m81vk" }],
   ["path", { d: "M3 10h18", key: "8toen8" }],
@@ -17323,40 +17323,40 @@ const __iconNode$E = [
   ["path", { d: "M7 14h.01", key: "1qa3f1" }],
   ["path", { d: "M17 18h.01", key: "1bdyru" }]
 ];
-const CalendarRange = createLucideIcon("calendar-range", __iconNode$E);
-const __iconNode$D = [
+const CalendarRange = createLucideIcon("calendar-range", __iconNode$H);
+const __iconNode$G = [
   ["path", { d: "M8 2v4", key: "1cmpym" }],
   ["path", { d: "M16 2v4", key: "4m81vk" }],
   ["rect", { width: "18", height: "18", x: "3", y: "4", rx: "2", key: "1hopcy" }],
   ["path", { d: "M3 10h18", key: "8toen8" }]
 ];
-const Calendar = createLucideIcon("calendar", __iconNode$D);
-const __iconNode$C = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
-const Check = createLucideIcon("check", __iconNode$C);
-const __iconNode$B = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
-const ChevronDown = createLucideIcon("chevron-down", __iconNode$B);
-const __iconNode$A = [["path", { d: "m18 15-6-6-6 6", key: "153udz" }]];
-const ChevronUp = createLucideIcon("chevron-up", __iconNode$A);
-const __iconNode$z = [
+const Calendar = createLucideIcon("calendar", __iconNode$G);
+const __iconNode$F = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
+const Check = createLucideIcon("check", __iconNode$F);
+const __iconNode$E = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
+const ChevronDown = createLucideIcon("chevron-down", __iconNode$E);
+const __iconNode$D = [["path", { d: "m18 15-6-6-6 6", key: "153udz" }]];
+const ChevronUp = createLucideIcon("chevron-up", __iconNode$D);
+const __iconNode$C = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
   ["line", { x1: "12", x2: "12", y1: "8", y2: "12", key: "1pkeuh" }],
   ["line", { x1: "12", x2: "12.01", y1: "16", y2: "16", key: "4dfq90" }]
 ];
-const CircleAlert = createLucideIcon("circle-alert", __iconNode$z);
-const __iconNode$y = [
+const CircleAlert = createLucideIcon("circle-alert", __iconNode$C);
+const __iconNode$B = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
   ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
 ];
-const CircleCheck = createLucideIcon("circle-check", __iconNode$y);
-const __iconNode$x = [
+const CircleCheck = createLucideIcon("circle-check", __iconNode$B);
+const __iconNode$A = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
   ["path", { d: "M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3", key: "1u773s" }],
   ["path", { d: "M12 17h.01", key: "p32p05" }]
 ];
-const CircleQuestionMark = createLucideIcon("circle-question-mark", __iconNode$x);
-const __iconNode$w = [["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }]];
-const Circle = createLucideIcon("circle", __iconNode$w);
-const __iconNode$v = [
+const CircleQuestionMark = createLucideIcon("circle-question-mark", __iconNode$A);
+const __iconNode$z = [["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }]];
+const Circle = createLucideIcon("circle", __iconNode$z);
+const __iconNode$y = [
   ["path", { d: "M11 10.27 7 3.34", key: "16pf9h" }],
   ["path", { d: "m11 13.73-4 6.93", key: "794ttg" }],
   ["path", { d: "M12 22v-2", key: "1osdcq" }],
@@ -17372,13 +17372,13 @@ const __iconNode$v = [
   ["circle", { cx: "12", cy: "12", r: "2", key: "1c9p78" }],
   ["circle", { cx: "12", cy: "12", r: "8", key: "46899m" }]
 ];
-const Cog = createLucideIcon("cog", __iconNode$v);
-const __iconNode$u = [
+const Cog = createLucideIcon("cog", __iconNode$y);
+const __iconNode$x = [
   ["rect", { width: "14", height: "14", x: "8", y: "8", rx: "2", ry: "2", key: "17jyea" }],
   ["path", { d: "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2", key: "zix9uf" }]
 ];
-const Copy = createLucideIcon("copy", __iconNode$u);
-const __iconNode$t = [
+const Copy = createLucideIcon("copy", __iconNode$x);
+const __iconNode$w = [
   [
     "path",
     {
@@ -17397,8 +17397,8 @@ const __iconNode$t = [
   ],
   ["path", { d: "m9.6 14.4 4.8-4.8", key: "6umqxw" }]
 ];
-const Dumbbell = createLucideIcon("dumbbell", __iconNode$t);
-const __iconNode$s = [
+const Dumbbell = createLucideIcon("dumbbell", __iconNode$w);
+const __iconNode$v = [
   [
     "path",
     {
@@ -17407,8 +17407,8 @@ const __iconNode$s = [
     }
   ]
 ];
-const Flag = createLucideIcon("flag", __iconNode$s);
-const __iconNode$r = [
+const Flag = createLucideIcon("flag", __iconNode$v);
+const __iconNode$u = [
   [
     "path",
     {
@@ -17419,8 +17419,18 @@ const __iconNode$r = [
   ["path", { d: "M12 10v6", key: "1bos4e" }],
   ["path", { d: "m15 13-3 3-3-3", key: "6j2sf0" }]
 ];
-const FolderDown = createLucideIcon("folder-down", __iconNode$r);
-const __iconNode$q = [
+const FolderDown = createLucideIcon("folder-down", __iconNode$u);
+const __iconNode$t = [
+  [
+    "path",
+    {
+      d: "m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2",
+      key: "usdka0"
+    }
+  ]
+];
+const FolderOpen = createLucideIcon("folder-open", __iconNode$t);
+const __iconNode$s = [
   [
     "path",
     {
@@ -17431,8 +17441,8 @@ const __iconNode$q = [
   ["path", { d: "M12 10v6", key: "1bos4e" }],
   ["path", { d: "m9 13 3-3 3 3", key: "1pxg3c" }]
 ];
-const FolderUp = createLucideIcon("folder-up", __iconNode$q);
-const __iconNode$p = [
+const FolderUp = createLucideIcon("folder-up", __iconNode$s);
+const __iconNode$r = [
   [
     "path",
     {
@@ -17441,8 +17451,8 @@ const __iconNode$p = [
     }
   ]
 ];
-const Funnel = createLucideIcon("funnel", __iconNode$p);
-const __iconNode$o = [
+const Funnel = createLucideIcon("funnel", __iconNode$r);
+const __iconNode$q = [
   ["circle", { cx: "12", cy: "5", r: "1", key: "gxeob9" }],
   ["circle", { cx: "19", cy: "5", r: "1", key: "w8mnmm" }],
   ["circle", { cx: "5", cy: "5", r: "1", key: "lttvr7" }],
@@ -17453,8 +17463,8 @@ const __iconNode$o = [
   ["circle", { cx: "19", cy: "19", r: "1", key: "shf9b7" }],
   ["circle", { cx: "5", cy: "19", r: "1", key: "bfqh0e" }]
 ];
-const Grip = createLucideIcon("grip", __iconNode$o);
-const __iconNode$n = [
+const Grip = createLucideIcon("grip", __iconNode$q);
+const __iconNode$p = [
   ["circle", { cx: "9", cy: "12", r: "1", key: "1vctgf" }],
   ["circle", { cx: "9", cy: "5", r: "1", key: "hp0tcf" }],
   ["circle", { cx: "9", cy: "19", r: "1", key: "fkjjf6" }],
@@ -17462,8 +17472,8 @@ const __iconNode$n = [
   ["circle", { cx: "15", cy: "5", r: "1", key: "19l28e" }],
   ["circle", { cx: "15", cy: "19", r: "1", key: "f4zoj3" }]
 ];
-const GripVertical = createLucideIcon("grip-vertical", __iconNode$n);
-const __iconNode$m = [
+const GripVertical = createLucideIcon("grip-vertical", __iconNode$p);
+const __iconNode$o = [
   [
     "path",
     {
@@ -17472,16 +17482,16 @@ const __iconNode$m = [
     }
   ]
 ];
-const Heart = createLucideIcon("heart", __iconNode$m);
-const __iconNode$l = [
+const Heart = createLucideIcon("heart", __iconNode$o);
+const __iconNode$n = [
   ["rect", { x: "3", y: "5", width: "6", height: "6", rx: "1", key: "1defrl" }],
   ["path", { d: "m3 17 2 2 4-4", key: "1jhpwq" }],
   ["path", { d: "M13 6h8", key: "15sg57" }],
   ["path", { d: "M13 12h8", key: "h98zly" }],
   ["path", { d: "M13 18h8", key: "oe0vm4" }]
 ];
-const ListTodo = createLucideIcon("list-todo", __iconNode$l);
-const __iconNode$k = [
+const ListTodo = createLucideIcon("list-todo", __iconNode$n);
+const __iconNode$m = [
   [
     "path",
     {
@@ -17492,8 +17502,8 @@ const __iconNode$k = [
   ["path", { d: "M15 5.764v15", key: "1pn4in" }],
   ["path", { d: "M9 3.236v15", key: "1uimfh" }]
 ];
-const Map$1 = createLucideIcon("map", __iconNode$k);
-const __iconNode$j = [
+const Map$1 = createLucideIcon("map", __iconNode$m);
+const __iconNode$l = [
   [
     "path",
     {
@@ -17502,16 +17512,16 @@ const __iconNode$j = [
     }
   ]
 ];
-const Moon = createLucideIcon("moon", __iconNode$j);
-const __iconNode$i = [["path", { d: "m8 3 4 8 5-5 5 15H2L8 3z", key: "otkl63" }]];
-const Mountain = createLucideIcon("mountain", __iconNode$i);
-const __iconNode$h = [
+const Moon = createLucideIcon("moon", __iconNode$l);
+const __iconNode$k = [["path", { d: "m8 3 4 8 5-5 5 15H2L8 3z", key: "otkl63" }]];
+const Mountain = createLucideIcon("mountain", __iconNode$k);
+const __iconNode$j = [
   ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }],
   ["path", { d: "M3 9h18", key: "1pudct" }],
   ["path", { d: "M9 21V9", key: "1oto5p" }]
 ];
-const PanelsTopLeft = createLucideIcon("panels-top-left", __iconNode$h);
-const __iconNode$g = [
+const PanelsTopLeft = createLucideIcon("panels-top-left", __iconNode$j);
+const __iconNode$i = [
   [
     "path",
     {
@@ -17521,13 +17531,13 @@ const __iconNode$g = [
   ],
   ["path", { d: "m15 5 4 4", key: "1mk7zo" }]
 ];
-const Pencil = createLucideIcon("pencil", __iconNode$g);
-const __iconNode$f = [
+const Pencil = createLucideIcon("pencil", __iconNode$i);
+const __iconNode$h = [
   ["path", { d: "M5 12h14", key: "1ays0h" }],
   ["path", { d: "M12 5v14", key: "s699le" }]
 ];
-const Plus = createLucideIcon("plus", __iconNode$f);
-const __iconNode$e = [
+const Plus = createLucideIcon("plus", __iconNode$h);
+const __iconNode$g = [
   [
     "path",
     {
@@ -17540,20 +17550,32 @@ const __iconNode$e = [
   ["path", { d: "m8.5 6.5 2-2", key: "vc6u1g" }],
   ["path", { d: "m17.5 15.5 2-2", key: "wo5hmg" }]
 ];
-const Ruler = createLucideIcon("ruler", __iconNode$e);
-const __iconNode$d = [
+const Ruler = createLucideIcon("ruler", __iconNode$g);
+const __iconNode$f = [
+  [
+    "path",
+    {
+      d: "M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z",
+      key: "1c8476"
+    }
+  ],
+  ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
+  ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
+];
+const Save = createLucideIcon("save", __iconNode$f);
+const __iconNode$e = [
   ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
   ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
 ];
-const Search = createLucideIcon("search", __iconNode$d);
-const __iconNode$c = [
+const Search = createLucideIcon("search", __iconNode$e);
+const __iconNode$d = [
   ["path", { d: "M14 17H5", key: "gfn3mx" }],
   ["path", { d: "M19 7h-9", key: "6i9tg" }],
   ["circle", { cx: "17", cy: "17", r: "3", key: "18b49y" }],
   ["circle", { cx: "7", cy: "7", r: "3", key: "dfmy0x" }]
 ];
-const Settings2 = createLucideIcon("settings-2", __iconNode$c);
-const __iconNode$b = [
+const Settings2 = createLucideIcon("settings-2", __iconNode$d);
+const __iconNode$c = [
   [
     "path",
     {
@@ -17563,8 +17585,8 @@ const __iconNode$b = [
   ],
   ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
 ];
-const Settings = createLucideIcon("settings", __iconNode$b);
-const __iconNode$a = [
+const Settings = createLucideIcon("settings", __iconNode$c);
+const __iconNode$b = [
   [
     "path",
     {
@@ -17576,8 +17598,8 @@ const __iconNode$a = [
   ["path", { d: "M22 4h-4", key: "gwowj6" }],
   ["circle", { cx: "4", cy: "20", r: "2", key: "6kqj1y" }]
 ];
-const Sparkles = createLucideIcon("sparkles", __iconNode$a);
-const __iconNode$9 = [
+const Sparkles = createLucideIcon("sparkles", __iconNode$b);
+const __iconNode$a = [
   [
     "path",
     {
@@ -17586,8 +17608,8 @@ const __iconNode$9 = [
     }
   ]
 ];
-const Star = createLucideIcon("star", __iconNode$9);
-const __iconNode$8 = [
+const Star = createLucideIcon("star", __iconNode$a);
+const __iconNode$9 = [
   ["circle", { cx: "12", cy: "12", r: "4", key: "4exip2" }],
   ["path", { d: "M12 2v2", key: "tus03m" }],
   ["path", { d: "M12 20v2", key: "1lh1kg" }],
@@ -17598,8 +17620,8 @@ const __iconNode$8 = [
   ["path", { d: "m6.34 17.66-1.41 1.41", key: "1m8zz5" }],
   ["path", { d: "m19.07 4.93-1.41 1.41", key: "1shlcs" }]
 ];
-const Sun = createLucideIcon("sun", __iconNode$8);
-const __iconNode$7 = [
+const Sun = createLucideIcon("sun", __iconNode$9);
+const __iconNode$8 = [
   ["path", { d: "M12 9a4 4 0 0 0-2 7.5", key: "1jvsq6" }],
   ["path", { d: "M12 3v2", key: "1w22ol" }],
   ["path", { d: "m6.6 18.4-1.4 1.4", key: "w2yidj" }],
@@ -17607,29 +17629,29 @@ const __iconNode$7 = [
   ["path", { d: "M4 13H2", key: "118le4" }],
   ["path", { d: "M6.34 7.34 4.93 5.93", key: "1brd51" }]
 ];
-const ThermometerSun = createLucideIcon("thermometer-sun", __iconNode$7);
-const __iconNode$6 = [
+const ThermometerSun = createLucideIcon("thermometer-sun", __iconNode$8);
+const __iconNode$7 = [
   ["path", { d: "M10 11v6", key: "nco0om" }],
   ["path", { d: "M14 11v6", key: "outv1u" }],
   ["path", { d: "M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6", key: "miytrc" }],
   ["path", { d: "M3 6h18", key: "d0wm0j" }],
   ["path", { d: "M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2", key: "e791ji" }]
 ];
-const Trash2 = createLucideIcon("trash-2", __iconNode$6);
-const __iconNode$5 = [
+const Trash2 = createLucideIcon("trash-2", __iconNode$7);
+const __iconNode$6 = [
   ["path", { d: "M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6", key: "miytrc" }],
   ["path", { d: "M3 6h18", key: "d0wm0j" }],
   ["path", { d: "M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2", key: "e791ji" }]
 ];
-const Trash = createLucideIcon("trash", __iconNode$5);
-const __iconNode$4 = [
+const Trash = createLucideIcon("trash", __iconNode$6);
+const __iconNode$5 = [
   [
     "path",
     { d: "M13.73 4a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z", key: "14u9p9" }
   ]
 ];
-const Triangle = createLucideIcon("triangle", __iconNode$4);
-const __iconNode$3 = [
+const Triangle = createLucideIcon("triangle", __iconNode$5);
+const __iconNode$4 = [
   ["path", { d: "M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978", key: "1n3hpd" }],
   ["path", { d: "M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978", key: "rfe1zi" }],
   ["path", { d: "M18 9h1.5a1 1 0 0 0 0-5H18", key: "7xy6bh" }],
@@ -17637,7 +17659,13 @@ const __iconNode$3 = [
   ["path", { d: "M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z", key: "1mhfuq" }],
   ["path", { d: "M6 9H4.5a1 1 0 0 1 0-5H6", key: "tex48p" }]
 ];
-const Trophy = createLucideIcon("trophy", __iconNode$3);
+const Trophy = createLucideIcon("trophy", __iconNode$4);
+const __iconNode$3 = [
+  ["path", { d: "M12 3v12", key: "1x0j5s" }],
+  ["path", { d: "m17 8-5-5-5 5", key: "7q97r8" }],
+  ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }]
+];
+const Upload = createLucideIcon("upload", __iconNode$3);
 const __iconNode$2 = [
   ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
   ["path", { d: "M16 3.128a4 4 0 0 1 0 7.744", key: "16gr8j" }],
@@ -33438,6 +33466,328 @@ function RaceSchedule({
     }
   ) });
 }
+const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec"
+];
+const YEAR_ALIASES = {
+  "First Year": "Junior Year",
+  "Second Year": "Classic Year",
+  "Third Year": "Senior Year"
+};
+function normalizeYear(year) {
+  return YEAR_ALIASES[year] ?? year;
+}
+function turnToDate(turn) {
+  const [monthStr, periodStr] = turn.split("_");
+  const monthIndex = parseInt(monthStr, 10) - 1;
+  const month = MONTHS[monthIndex] ?? "Jan";
+  const period = periodStr === "01" ? "Early" : "Late";
+  return `${period} ${month}`;
+}
+function dateToTurn(date2) {
+  const [period, month] = date2.split(" ");
+  const monthIndex = MONTHS.indexOf(month);
+  const monthNum = String(monthIndex + 1).padStart(2, "0");
+  const periodNum = period === "Early" ? "01" : "02";
+  return `${monthNum}_${periodNum}`;
+}
+function parseRaceSchedule(entries) {
+  return entries.map((entry) => ({
+    name: entry.raceName,
+    year: normalizeYear(entry.year),
+    date: turnToDate(entry.turn)
+  }));
+}
+function toExportFormat(races) {
+  return races.map((race) => ({
+    raceName: race.name,
+    grade: "",
+    year: race.year,
+    turn: dateToTurn(race.date),
+    position: 1
+  }));
+}
+function useRaceSchedules() {
+  const [scheduleNames, setScheduleNames] = reactExports.useState([]);
+  const fetchList = reactExports.useCallback(async () => {
+    try {
+      const res = await fetch("/race-schedules");
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      setScheduleNames(Array.isArray(data?.schedules) ? data.schedules : []);
+    } catch (err) {
+      console.error("Failed to fetch race schedules:", err);
+    }
+  }, []);
+  reactExports.useEffect(() => {
+    void fetchList();
+  }, [fetchList]);
+  const fetchSchedule = reactExports.useCallback(async (name) => {
+    const res = await fetch(`/race-schedules/${encodeURIComponent(name)}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    return data.entries;
+  }, []);
+  const saveSchedule = reactExports.useCallback(async (name, entries) => {
+    const res = await fetch(`/race-schedules/${encodeURIComponent(name)}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ entries })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    await fetchList();
+  }, [fetchList]);
+  const deleteSchedule = reactExports.useCallback(async (name) => {
+    const res = await fetch(`/race-schedules/${encodeURIComponent(name)}`, {
+      method: "DELETE"
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    setScheduleNames((prev) => prev.filter((n) => n !== name));
+  }, []);
+  return { scheduleNames, fetchSchedule, saveSchedule, deleteSchedule, refetch: fetchList };
+}
+function RaceImporter({ currentRaceSchedule, onLoadSchedule }) {
+  const [pendingEntries, setPendingEntries] = reactExports.useState(null);
+  const [importName, setImportName] = reactExports.useState("");
+  const [saveName, setSaveName] = reactExports.useState("");
+  const [showSaveCurrent, setShowSaveCurrent] = reactExports.useState(false);
+  const [error, setError] = reactExports.useState("");
+  const fileInputRef = reactExports.useRef(null);
+  const { scheduleNames, fetchSchedule, saveSchedule, deleteSchedule } = useRaceSchedules();
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setError("");
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const json = JSON.parse(evt.target?.result);
+        if (!Array.isArray(json)) throw new Error("Expected a JSON array");
+        setPendingEntries(json);
+        setImportName(file.name.replace(/\.json$/i, ""));
+      } catch {
+        setError("Invalid file — expected a JSON array of race entries.");
+        setPendingEntries(null);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  };
+  const handleSaveImport = async () => {
+    if (!pendingEntries || !importName.trim()) return;
+    setError("");
+    try {
+      await saveSchedule(importName.trim(), pendingEntries);
+      setPendingEntries(null);
+      setImportName("");
+    } catch {
+      setError("Failed to save schedule.");
+    }
+  };
+  const handleSaveCurrent = async () => {
+    if (!saveName.trim() || currentRaceSchedule.length === 0) return;
+    setError("");
+    try {
+      await saveSchedule(saveName.trim(), toExportFormat(currentRaceSchedule));
+      setSaveName("");
+      setShowSaveCurrent(false);
+    } catch {
+      setError("Failed to save current schedule.");
+    }
+  };
+  const handleLoad = async (name) => {
+    setError("");
+    try {
+      const entries = await fetchSchedule(name);
+      onLoadSchedule(parseRaceSchedule(entries));
+    } catch {
+      setError(`Failed to load "${name}".`);
+    }
+  };
+  const handleDelete = async (name) => {
+    setError("");
+    try {
+      await deleteSchedule(name);
+    } catch {
+      setError(`Failed to delete "${name}".`);
+    }
+  };
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-4 border border-border rounded-xl p-4 space-y-3", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between gap-3", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-sm font-semibold text-muted-foreground uppercase tracking-wide", children: "Saved Schedules" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "input",
+          {
+            ref: fileInputRef,
+            type: "file",
+            accept: ".json",
+            className: "hidden",
+            onChange: handleFileChange
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          Button,
+          {
+            variant: "outline",
+            size: "sm",
+            onClick: () => fileInputRef.current?.click(),
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Upload, { size: 14, className: "mr-1.5" }),
+              "Import JSON"
+            ]
+          }
+        ),
+        currentRaceSchedule.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          Button,
+          {
+            variant: "outline",
+            size: "sm",
+            onClick: () => {
+              setShowSaveCurrent((v) => !v);
+              setSaveName("");
+            },
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Save, { size: 14, className: "mr-1.5" }),
+              "Save Current"
+            ]
+          }
+        )
+      ] })
+    ] }),
+    error && /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-destructive", children: error }),
+    pendingEntries && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 p-3 rounded-lg bg-muted/30 border border-border", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "text-sm text-muted-foreground shrink-0", children: [
+        pendingEntries.length,
+        " races —"
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Input,
+        {
+          autoFocus: true,
+          className: "h-7 text-sm flex-1",
+          placeholder: "Schedule name...",
+          value: importName,
+          onChange: (e) => setImportName(e.target.value),
+          onKeyDown: (e) => {
+            if (e.key === "Enter") void handleSaveImport();
+          }
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Button,
+        {
+          size: "sm",
+          className: "h-7 shrink-0",
+          disabled: !importName.trim(),
+          onClick: handleSaveImport,
+          children: "Save"
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Button,
+        {
+          variant: "ghost",
+          size: "sm",
+          className: "h-7 shrink-0",
+          onClick: () => {
+            setPendingEntries(null);
+            setImportName("");
+          },
+          children: "Cancel"
+        }
+      )
+    ] }),
+    showSaveCurrent && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 p-3 rounded-lg bg-muted/30 border border-border", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "text-sm text-muted-foreground shrink-0", children: [
+        currentRaceSchedule.length,
+        " races —"
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Input,
+        {
+          autoFocus: true,
+          className: "h-7 text-sm flex-1",
+          placeholder: "Schedule name...",
+          value: saveName,
+          onChange: (e) => setSaveName(e.target.value),
+          onKeyDown: (e) => {
+            if (e.key === "Enter") void handleSaveCurrent();
+          }
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Button,
+        {
+          size: "sm",
+          className: "h-7 shrink-0",
+          disabled: !saveName.trim(),
+          onClick: handleSaveCurrent,
+          children: "Save"
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Button,
+        {
+          variant: "ghost",
+          size: "sm",
+          className: "h-7 shrink-0",
+          onClick: () => {
+            setShowSaveCurrent(false);
+            setSaveName("");
+          },
+          children: "Cancel"
+        }
+      )
+    ] }),
+    scheduleNames.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "space-y-1.5", children: scheduleNames.map((name) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        className: "flex items-center justify-between gap-3 px-3 py-2 rounded-lg border border-border bg-muted/10",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm font-medium truncate", children: name }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-1.5 shrink-0", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              Button,
+              {
+                variant: "outline",
+                size: "sm",
+                className: "h-7 text-xs",
+                onClick: () => void handleLoad(name),
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(FolderOpen, { size: 12, className: "mr-1" }),
+                  "Load"
+                ]
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              Button,
+              {
+                variant: "ghost",
+                size: "sm",
+                className: "h-7 text-destructive hover:text-destructive hover:bg-destructive/10",
+                onClick: () => void handleDelete(name),
+                children: /* @__PURE__ */ jsxRuntimeExports.jsx(Trash2, { size: 12 })
+              }
+            )
+          ] })
+        ]
+      },
+      name
+    )) }) : !pendingEntries && /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground text-center py-3", children: "No saved schedules. Import a JSON file or save the current schedule." })
+  ] });
+}
 function RaceScheduleSection({ config: config2, updateConfig }) {
   const {
     race_schedule: race_schedule2,
@@ -33478,6 +33828,13 @@ function RaceScheduleSection({ config: config2, updateConfig }) {
           )
         ),
         clearRaceSchedule: () => updateConfig("race_schedule", [])
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      RaceImporter,
+      {
+        currentRaceSchedule: race_schedule2,
+        onLoadSchedule: (races) => updateConfig("race_schedule", races)
       }
     )
   ] });
@@ -39317,10 +39674,6 @@ function App() {
     () => JSON.stringify(config2) !== JSON.stringify(baselineConfig),
     [baselineConfig, config2]
   );
-  const appliedPresetName = reactExports.useMemo(() => {
-    if (!appliedPresetId) return "None";
-    return presets.find((preset) => preset.id === appliedPresetId)?.name ?? appliedPresetId;
-  }, [appliedPresetId, presets]);
   const effectiveThemeId = config2.theme || (themes.length > 0 ? themes[0].id : "");
   reactExports.useEffect(() => {
     fetch("/themes").then((res) => res.json()).then((data) => setThemes(data)).catch((err) => console.error("Failed to load themes:", err));
@@ -39742,12 +40095,7 @@ function App() {
                 onClick: () => void handleApplyPreset(),
                 children: "Save & Apply Preset"
               }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-sm text-muted-foreground self-center whitespace-nowrap", children: [
-              "Currently applied:",
-              " ",
-              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-medium text-foreground", children: appliedPresetName })
-            ] })
+            )
           ] })
         ] })
       ] }),

@@ -16,6 +16,12 @@ from server.legacy_config_store import (
 )
 from server.setup_store import load_setup_config, save_setup_config
 from utils.scenario_store import load_scenarios, save_selected_scenario, AVAILABLE_SCENARIOS
+from utils.race_schedule_store import (
+  list_race_schedules,
+  load_race_schedule,
+  save_race_schedule,
+  delete_race_schedule,
+)
 from server.config_store import (
   list_configs,
   load_named_config,
@@ -105,6 +111,39 @@ def update_scenario(payload: dict):
     raise HTTPException(status_code=400, detail="Invalid scenario name")
   save_selected_scenario(scenario)
   return {"status": "success", "selected": scenario}
+
+@app.get("/race-schedules")
+def get_race_schedule_list():
+  return {"schedules": list_race_schedules()}
+
+@app.get("/race-schedules/{name}")
+def get_race_schedule(name: str):
+  try:
+    entries = load_race_schedule(name)
+    return {"name": name, "entries": entries}
+  except FileNotFoundError:
+    raise HTTPException(status_code=404, detail="Schedule not found")
+  except ValueError as e:
+    raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/race-schedules/{name}")
+def upsert_race_schedule(name: str, payload: dict):
+  entries = payload.get("entries", [])
+  try:
+    save_race_schedule(name, entries)
+    return {"status": "success", "name": name}
+  except ValueError as e:
+    raise HTTPException(status_code=400, detail=str(e))
+
+@app.delete("/race-schedules/{name}")
+def delete_race_schedule_endpoint(name: str):
+  try:
+    delete_race_schedule(name)
+    return {"status": "success"}
+  except FileNotFoundError:
+    raise HTTPException(status_code=404, detail="Schedule not found")
+  except ValueError as e:
+    raise HTTPException(status_code=400, detail=str(e))
 
 @app.post("/api/webhook")
 def update_webhook(data: dict):
